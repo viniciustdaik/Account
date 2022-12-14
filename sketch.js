@@ -4,8 +4,13 @@ var userInfo;
 
 var nameInput;
 
+var initialWidth, initialHeight, newWidthAdded = 0;
+
 function setup() {
     createCanvas(windowWidth, windowHeight);
+
+    initialWidth = width;
+    initialHeight = height;
 
     emailInput = createInput("viniciuskriiger2008@gmail.com").attribute("placeholder", "Email");
     emailInput.position(width / 2 - 185, height / 2 - 90);
@@ -68,6 +73,16 @@ function setup() {
 function draw() {
     background("gray");
 
+    if (windowWidth >= 295) {
+        emailInput.position(windowWidth / 2 - 185, height / 2 - 90);
+        passwordInput.position(windowWidth / 2 - 85, height / 2 - 50);
+        nameInput.position(windowWidth / 2 - 60, height / 2 - 90);
+        signInButton.position(windowWidth / 2 - 55, height / 2);
+        signUpButton.position(windowWidth / 2 - 65, height / 2 + 52.5);
+        signOutButton.position(windowWidth / 2 - 55, height / 2); //height / 2 + 104.5
+        deleteButton.position(windowWidth / 2 - 65, height / 2 + 52.5); //height / 2 + 184.5
+    }
+
     if (firebase.auth().currentUser !== null) {
         push();
         if (userInfo === undefined) {
@@ -83,7 +98,7 @@ function draw() {
             textSize(25);
             textAlign("right", "center")
             fill("black")
-            text("Nome: ", nameInput.x, nameInput.y + 18);
+            text("Nome: ", nameInput.x - newWidthAdded / 2, nameInput.y + 18);
             nameInput.show();
             if (nameInput.value() !== userInfo.name) {
                 firebase.database().ref("/users/" + firebase.auth().currentUser.uid).update({
@@ -98,11 +113,12 @@ function draw() {
             }
         }
 
-        textAlign("center");
+        textAlign("center", "top");
         fill("black");
         textSize(45);
-        //text("uid: " + firebase.auth().currentUser.uid, width / 2, 35);
-        text("" + firebase.auth().currentUser.email, width / 2, 35);
+        textWrap("CHAR");
+        //text("uid: " + firebase.auth().currentUser.uid, windowWidth / 2 - newWidthAdded / 2, 35);
+        text("" + firebase.auth().currentUser.email, 0 - newWidthAdded / 2, 25, windowWidth, windowHeight);
 
         pop();
 
@@ -221,4 +237,15 @@ function confirm(ThingToConfirm) {
         }
     })
 
+}
+
+function windowResized() {
+    if (windowWidth >= 295) {
+        resizeCanvas(windowWidth, windowHeight);
+        if (initialWidth !== width) {
+            newWidthAdded = width - initialWidth;
+        } else {
+            newWidthAdded = 0;
+        }
+    }
 }
