@@ -1,15 +1,30 @@
 var signInInfo, emailInput, passwordInput, signInButton, signUpButton, signOutButton, deleteButton;
 
+var userInfo;
+
+var nameInput;
+
 function setup() {
     createCanvas(windowWidth, windowHeight);
 
     emailInput = createInput("viniciuskriiger2008@gmail.com").attribute("placeholder", "Email");
-    emailInput.position(width / 2 - 85, height / 2 - 90);
-    emailInput.size(200, 30);
+    emailInput.position(width / 2 - 185, height / 2 - 90);
+    emailInput.size(400, 30);
+    emailInput.style("border-radius:15px");
+    emailInput.style("font-size:25px");
 
     passwordInput = createInput("").attribute("placeholder", "Senha");
     passwordInput.position(width / 2 - 85, height / 2 - 50);
     passwordInput.size(200, 30);
+    passwordInput.style("border-radius:15px");
+    passwordInput.style("font-size:25px");
+
+    nameInput = createInput("").attribute("placeholder", "");
+    nameInput.position(width / 2 - 60, height / 2 - 90);
+    nameInput.size(200, 30);
+    nameInput.style("font-size:25px");
+    nameInput.style("border-radius:15px");
+    nameInput.hide();
 
     signInButton = createButton("Entrar");
     signInButton.position(width / 2 - 55, height / 2);
@@ -17,6 +32,7 @@ function setup() {
     signInButton.style("background-color:blue");
     signInButton.style("font-size:45px");
     signInButton.style("border-radius:25px");
+    signInButton.style("cursor:pointer");
     signInButton.mousePressed(() => this.signIn());
 
     signUpButton = createButton("Cadastrar");
@@ -25,6 +41,7 @@ function setup() {
     signUpButton.style("background-color:lightblue");
     signUpButton.style("font-size:35px");
     signUpButton.style("border-radius:25px");
+    signUpButton.style("cursor:pointer");
     signUpButton.mousePressed(() => this.signUp());
 
     signOutButton = createButton("Sair");
@@ -33,6 +50,7 @@ function setup() {
     signOutButton.style("background-color:red");
     signOutButton.style("font-size:45px");
     signOutButton.style("border-radius:25px");
+    signOutButton.style("cursor:pointer");
     signOutButton.hide();
     signOutButton.mousePressed(() => this.signOut());
 
@@ -41,6 +59,7 @@ function setup() {
     deleteButton.style("background-color:red");
     deleteButton.style("font-size:45px");
     deleteButton.style("border-radius:25px");
+    deleteButton.style("cursor:pointer");
     deleteButton.size(170, 50);
     deleteButton.hide();
     deleteButton.mousePressed(() => this.Delete());
@@ -50,11 +69,42 @@ function draw() {
     background("gray");
 
     if (firebase.auth().currentUser !== null) {
+        push();
+        if (userInfo === undefined) {
+            var userInfoRef = firebase.database().ref("/users/" + firebase.auth().currentUser.uid);
+            userInfoRef.on("value", data => {
+                if (userInfo === undefined) {
+                    userInfo = data.val();
+                    console.log("userInfo:" + userInfo);
+                    nameInput.value(userInfo.name);
+                }
+            });
+        } else {
+            textSize(25);
+            textAlign("right", "center")
+            fill("black")
+            text("Nome: ", nameInput.x, nameInput.y + 18);
+            nameInput.show();
+            if (nameInput.value() !== userInfo.name) {
+                firebase.database().ref("/users/" + firebase.auth().currentUser.uid).update({
+                    name: nameInput.value(),
+                });
+
+                var userInfoRef = firebase.database().ref("/users/" + firebase.auth().currentUser.uid);
+                userInfoRef.on("value", data => {
+                    userInfo = data.val();
+                    //console.log("userInfo:" + userInfo);
+                });
+            }
+        }
+
         textAlign("center");
         fill("black");
         textSize(45);
         //text("uid: " + firebase.auth().currentUser.uid, width / 2, 35);
         text("" + firebase.auth().currentUser.email, width / 2, 35);
+
+        pop();
 
         signInButton.hide();
         signUpButton.hide();
@@ -69,6 +119,7 @@ function draw() {
         passwordInput.show();
         signOutButton.hide();
         deleteButton.hide();
+        nameInput.hide();
     }
 
     drawSprites();
@@ -81,6 +132,15 @@ function signIn() {
             .then(response => {
                 console.log(response);
                 console.log(firebase.auth().currentUser.uid);
+
+                var userInfoRef = firebase.database().ref("/users/" + firebase.auth().currentUser.uid);
+                userInfoRef.on("value", data => {
+                    if (userInfo === undefined) {
+                        userInfo = data.val();
+                        console.log("userInfo:" + userInfo);
+                        nameInput.value(userInfo.name);
+                    }
+                });
             }).catch(error => {
                 console.log('error: ' + error);
             });
@@ -98,6 +158,15 @@ function signUp() {
                     email: emailInput.value(),
                     name: "",
                 });
+
+                var userInfoRef = firebase.database().ref("/users/" + firebase.auth().currentUser.uid);
+                userInfoRef.on("value", data => {
+                    if (userInfo === undefined) {
+                        userInfo = data.val();
+                        console.log("userInfo:" + userInfo);
+                        nameInput.value(userInfo.name);
+                    }
+                });
             })
             .catch((error) => {
                 const errorCode = error.code;
@@ -109,9 +178,11 @@ function signUp() {
 
 function signOut() {
     firebase.auth().signOut();
+    userInfo = undefined;
 }
 
 function Delete() {
     firebase.database().ref("/users/" + firebase.auth().currentUser.uid).remove();
     firebase.auth().currentUser.delete();
+    userInfo = undefined;
 }
