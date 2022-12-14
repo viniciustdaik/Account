@@ -52,7 +52,7 @@ function setup() {
     signOutButton.style("border-radius:25px");
     signOutButton.style("cursor:pointer");
     signOutButton.hide();
-    signOutButton.mousePressed(() => this.signOut());
+    signOutButton.mousePressed(() => this.confirm("signOut"));
 
     deleteButton = createButton("Deletar");
     deleteButton.position(width / 2 - 65, height / 2 + 52.5); //height / 2 + 184.5
@@ -62,7 +62,7 @@ function setup() {
     deleteButton.style("cursor:pointer");
     deleteButton.size(170, 50);
     deleteButton.hide();
-    deleteButton.mousePressed(() => this.Delete());
+    deleteButton.mousePressed(() => this.confirm("Delete"));
 }
 
 function draw() {
@@ -157,6 +157,7 @@ function signUp() {
                 firebase.database().ref("/users/" + firebase.auth().currentUser.uid).update({
                     email: emailInput.value(),
                     name: "",
+                    username: "",
                 });
 
                 var userInfoRef = firebase.database().ref("/users/" + firebase.auth().currentUser.uid);
@@ -185,4 +186,39 @@ function Delete() {
     firebase.database().ref("/users/" + firebase.auth().currentUser.uid).remove();
     firebase.auth().currentUser.delete();
     userInfo = undefined;
+}
+
+function confirm(ThingToConfirm) {
+    /*swal(
+        {
+            title: `Tem Certeza Que Você Quer Sair?`,
+            dangerMode: true,
+            buttons: true,
+        },
+    );*/
+
+
+    Swal.fire({
+        title: ThingToConfirm === "signOut" ?
+            'Tem Certeza Que Você Quer Sair?' : 'Tem certeza que você quer DELETAR sua conta?',
+        //text:
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sim!',
+        cancelButtonText: 'Não!',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            /*Swal.fire(
+                'Deleted!',
+                'Your file has been deleted.',
+                'success'
+            )*/
+
+            ThingToConfirm === "signOut" ?
+                signOut() : Delete();
+        }
+    })
+
 }
