@@ -41,7 +41,8 @@ function draw() {
         textAlign("center");
         fill("black");
         textSize(45);
-        text("uid: " + firebase.auth().currentUser.uid, width / 2, 35);
+        //text("uid: " + firebase.auth().currentUser.uid, width / 2, 35);
+        text("" + firebase.auth().currentUser.email, width / 2, 35);
     }
 
     drawSprites();
