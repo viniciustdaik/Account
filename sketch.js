@@ -24,6 +24,9 @@ function setup() {
     signOutButton = createButton("Sair");
     signOutButton.position(width / 2 - 35, height / 2 + 104.5);
     signOutButton.size(150, 50);
+    signOutButton.style("background-color:red");
+    signOutButton.style("font-size:45px");
+    signOutButton.hide();
     signOutButton.mousePressed(() => this.signOut());
 
     deleteButton = createButton("Deletar");
@@ -31,6 +34,7 @@ function setup() {
     deleteButton.style("background-color:red");
     deleteButton.style("font-size:45px");
     deleteButton.size(170, 50);
+    deleteButton.hide();
     deleteButton.mousePressed(() => this.Delete());
 }
 
@@ -43,6 +47,9 @@ function draw() {
         textSize(45);
         //text("uid: " + firebase.auth().currentUser.uid, width / 2, 35);
         text("" + firebase.auth().currentUser.email, width / 2, 35);
+
+        signOutButton.show();
+        deleteButton.show();
     }
 
     drawSprites();
