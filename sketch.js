@@ -56,7 +56,7 @@ function setup() {
         signInButton.style("font-size:35px");
     }
     signInButton.style("border-radius:25px");
-    signInButton.style("color:black");
+    signInButton.style("color:white");
     signInButton.style("cursor:pointer");
     signInButton.mousePressed(() => this.signIn("email&password"));
 
@@ -97,7 +97,7 @@ function setup() {
     } else {
         signOutButton.style("font-size:40px");
     }
-    signOutButton.style("color:black");
+    signOutButton.style("color:white");
     signOutButton.style("border-radius:25px");
     signOutButton.style("cursor:pointer");
     signOutButton.hide();
@@ -111,7 +111,7 @@ function setup() {
     } else {
         deleteButton.style("font-size:38px");
     }
-    deleteButton.style("color:black");
+    deleteButton.style("color:white");
     deleteButton.style("border-radius:25px");
     deleteButton.style("cursor:pointer");
     deleteButton.size(170, 50);
@@ -120,8 +120,13 @@ function setup() {
 
     verifyEmailButton = createButton("Verificar Email");
     verifyEmailButton.hide();
-    verifyEmailButton.position(width / 2 - 185 - xMinus, height / 2 - 150);
-    verifyEmailButton.size(400, 50);
+    if (!isMobile) {
+        verifyEmailButton.position(width / 2 - 185, height / 2 - 150);
+        verifyEmailButton.size(400, 50);
+    } else {
+        verifyEmailButton.size(width / 1.05, 50);
+        verifyEmailButton.position(10, height / 2 - 150);
+    }
     verifyEmailButton.style("background-color:blue");
     if (!isMobile) {
         verifyEmailButton.style("font-size:45px");
@@ -129,7 +134,7 @@ function setup() {
         verifyEmailButton.style("font-size:35px");
     }
     verifyEmailButton.style("border-radius:25px");
-    verifyEmailButton.style("color:black");
+    verifyEmailButton.style("color:white");
     verifyEmailButton.style("cursor:pointer");
     verifyEmailButton.mousePressed(() => this.emailVerification());
 }
