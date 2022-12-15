@@ -597,6 +597,7 @@ function windowResized() {
         emailInput.position(windowWidth / 2 - 185, height / 2 - 90);
         passwordInput.position(windowWidth / 2 - 185, height / 2 - 50);
         googleSignInButton.position(windowWidth / 2 - 22.5, height / 2 + 110);
+        applyChangesButton.position(windowWidth / 2 - 108, height / 2 - 48);
         verifyEmailButton.position(windowWidth / 2 - 185, height / 2 - 150);
         nameInput.position(windowWidth / 2 - 60, height / 2 - 90);
         if (accountPhoto !== undefined) {
