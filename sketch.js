@@ -3,7 +3,7 @@ var signInInfo, emailInput, passwordInput, signInButton, signUpButton, signOutBu
 
 var userInfo;
 
-var nameInput;
+var nameInput, accountPhoto;
 
 var initialWidth, initialHeight, newWidthAdded = 0;
 
@@ -89,23 +89,37 @@ function draw() {
     background("gray");
 
     if (firebase.auth().currentUser !== null) {
+        if (accountPhoto === undefined && firebase.auth().currentUser.photoURL !== null) {
+            accountPhoto = createImg(firebase.auth().currentUser.photoURL);
+            accountPhoto.position(width / 2 - 20, 5);
+            accountPhoto.style("content:contain");
+            accountPhoto.style("border-radius:45px");
+            accountPhoto.size(50, 50);
+        }
         push();
-        if (userInfo === undefined && userInfo !== null) {
+        if (userInfo === undefined && userInfo !== null
+            && firebase.auth().currentUser !== null) {
             textAlign("center");
             fill("yellow");
             stroke('gold');
             textSize(55);
-            text("Carregando...", 0 - newWidthAdded / 2, height / 2 - 80, windowWidth);
+            if (userInfo !== null && firebase.auth().currentUser !== null) {
+                text("Carregando...", 0 - newWidthAdded / 2, height / 2 - 80, windowWidth);
+            }
             stroke('gray');
             var userInfoRef = firebase.database().ref("/users/" + firebase.auth().currentUser.uid);
             userInfoRef.on("value", data => {
-                if (userInfo === undefined && userInfo !== null) {
+                if (userInfo === undefined && userInfo !== null
+                    && firebase.auth().currentUser !== null) {
                     userInfo = data.val();
                     console.log("userInfo:" + userInfo);
-                    nameInput.value(userInfo.name);
+                    if (userInfo !== null) {
+                        nameInput.value(userInfo.name);
+                    }
                 }
             });
-        } else if (userInfo !== null) {
+        } else if (userInfo !== null
+            && firebase.auth().currentUser !== null) {
             textSize(25);
             textAlign("right", "center")
             fill("black")
@@ -129,7 +143,12 @@ function draw() {
         textSize(45);
         textWrap("CHAR");
         //text("uid: " + firebase.auth().currentUser.uid, windowWidth / 2 - newWidthAdded / 2, 35);
-        text("" + firebase.auth().currentUser.email, 0 - newWidthAdded / 2, 25, windowWidth, windowHeight);
+        var textX = 0;
+        if (accountPhoto !== undefined) {
+            textX = 40;
+        }
+        text("" + firebase.auth().currentUser.email, 0 - newWidthAdded / 2, 25 + textX,
+            windowWidth, windowHeight);
 
         pop();
 
@@ -140,6 +159,9 @@ function draw() {
         passwordInput.hide();
         signOutButton.show();
         deleteButton.show();
+        if (accountPhoto !== undefined) {
+            accountPhoto.show();
+        }
     } else {
         signInButton.show();
         signUpButton.show();
@@ -149,6 +171,13 @@ function draw() {
         signOutButton.hide();
         deleteButton.hide();
         nameInput.hide();
+        if (accountPhoto !== undefined) {
+            accountPhoto.hide();
+        }
+
+        if (userInfo === null) {
+            userInfo = undefined;
+        }
     }
 
     drawSprites();
@@ -168,7 +197,11 @@ function signIn(provider) {
                     if (userInfo === undefined) {
                         userInfo = data.val();
                         console.log("userInfo:" + userInfo);
-                        nameInput.value(userInfo.name);
+                        if (userInfo !== null) {
+                            nameInput.value(userInfo.name);
+                        } else {
+                            userInfo = undefined;
+                        }
                     }
                 });
             }).catch(error => {
@@ -189,6 +222,14 @@ function signIn(provider) {
                 var user = result.user;
                 console.log(user);
 
+                if (accountPhoto === undefined && firebase.auth().currentUser.photoURL !== null) {
+                    accountPhoto = createImg(firebase.auth().currentUser.photoURL);
+                    accountPhoto.position(width / 2 - 20, 5);
+                    accountPhoto.style("content:contain");
+                    accountPhoto.style("border-radius:45px");
+                    accountPhoto.size(50, 50);
+                }
+
                 var userInfoRef = firebase.database().ref("/users/" + firebase.auth().currentUser.uid);
                 userInfoRef.on("value", data => {
                     if (userInfo === undefined && data.val() !== null) {
@@ -208,7 +249,11 @@ function signIn(provider) {
                                 if (userInfo === undefined) {
                                     userInfo = data2.val();
                                     console.log("userInfo:" + userInfo);
-                                    nameInput.value(userInfo.name);
+                                    if (userInfo !== null) {
+                                        nameInput.value(userInfo.name);
+                                    } else {
+                                        userInfo = undefined;
+                                    }
                                 }
                             });
                         }
@@ -227,7 +272,6 @@ function signIn(provider) {
                 var credential = error.credential;
                 // ...
             });
-
     }
 }
 
@@ -249,7 +293,11 @@ function signUp(provider) {
                     if (userInfo === undefined) {
                         userInfo = data.val();
                         console.log("userInfo:" + userInfo);
-                        nameInput.value(userInfo.name);
+                        if (userInfo !== null) {
+                            nameInput.value(userInfo.name);
+                        } else {
+                            userInfo = undefined;
+                        }
                     }
                 });
             })
@@ -264,11 +312,20 @@ function signUp(provider) {
 function signOut() {
     firebase.auth().signOut();
     userInfo = undefined;
+    if (accountPhoto !== undefined) {
+        accountPhoto.hide();
+        accountPhoto = undefined;
+    }
 }
 
 function Delete() {
     firebase.database().ref("/users/" + firebase.auth().currentUser.uid).remove();
     firebase.auth().currentUser.delete();
+    nameInput.hide();
+    if (accountPhoto !== undefined) {
+        accountPhoto.hide();
+        accountPhoto = undefined;
+    }
     userInfo = undefined;
 }
 
@@ -314,6 +371,9 @@ function windowResized() {
         passwordInput.position(windowWidth / 2 - 85, height / 2 - 50);
         googleSignInButton.position(windowWidth / 2 - 22.5, height / 2 + 110);
         nameInput.position(windowWidth / 2 - 60, height / 2 - 90);
+        if (accountPhoto !== undefined) {
+            accountPhoto.position(windowWidth / 2 - 20, 5);
+        }
         signInButton.position(windowWidth / 2 - 55, height / 2);
         signUpButton.position(windowWidth / 2 - 65, height / 2 + 52.5);
         signOutButton.position(windowWidth / 2 - 55, height / 2); //height / 2 + 104.5
