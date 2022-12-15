@@ -561,7 +561,7 @@ function confirm(ThingToConfirm) {
 }
 
 function windowResized() {
-    if (windowWidth >= 295 && !isMobile) {
+    if (windowWidth >= 440 && !isMobile) {
         resizeCanvas(windowWidth, windowHeight);
         emailInput.position(windowWidth / 2 - 185, height / 2 - 90);
         passwordInput.position(windowWidth / 2 - 185, height / 2 - 50);
