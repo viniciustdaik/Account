@@ -89,7 +89,7 @@ function setup() {
     googleSignInButton.mousePressed(() => this.signIn("google"));
 
     signOutButton = createButton("Sair");
-    signOutButton.position(width / 2 - 55, height / 2); //height / 2 + 104.5
+    signOutButton.position(width / 2 - 55 - xMinus, height / 2); //height / 2 + 104.5
     signOutButton.size(150, 50);
     signOutButton.style("background-color:red");
     if (!isMobile) {
@@ -104,7 +104,7 @@ function setup() {
     signOutButton.mousePressed(() => this.confirm("signOut"));
 
     deleteButton = createButton("Deletar");
-    deleteButton.position(width / 2 - 65, height / 2 + 52.5); //height / 2 + 184.5
+    deleteButton.position(width / 2 - 65 - xMinus, height / 2 + 52.5); //height / 2 + 184.5
     deleteButton.style("background-color:red");
     if (!isMobile) {
         deleteButton.style("font-size:45px");
