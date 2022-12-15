@@ -47,7 +47,7 @@ function setup() {
     nameInput.hide();
 
     signInButton = createButton("Entrar");
-    signInButton.position(width / 2 - 55 - xMinus, height / 2 + 10);
+    signInButton.position(width / 2 - 55 - xMinus, height / 2 + 10);//, height / 2
     signInButton.size(150, 50);
     signInButton.style("background-color:blue");
     if (!isMobile) {
@@ -61,6 +61,7 @@ function setup() {
     signInButton.mousePressed(() => this.signIn("email&password"));
 
     signUpButton = createButton("Cadastrar");
+    signUpButton.hide();
     signUpButton.position(width / 2 - 65 - xMinus, height / 2 + 62.5);
     signUpButton.size(170, 50);
     signUpButton.style("background-color:lightblue");
@@ -75,7 +76,7 @@ function setup() {
     signUpButton.mousePressed(() => this.signUp("email&password"));
 
     googleSignInButton = createButton("");
-    googleSignInButton.position(width / 2 - 22.5 - xMinus, height / 2 + 120);
+    googleSignInButton.position(width / 2 - 22.5 - xMinus, height / 2 + 65); //, height / 2 + 120
     googleSignInButton.size(80, 80);
     googleSignInButton.style("background-color:white");
     googleSignInButton.style("background-image:url('./assets/googleIconNoBG.png");
@@ -163,6 +164,14 @@ function setup() {
 function draw() {
     background("gray");
 
+    if (keyWentDown("enter")) {
+        if (firebase.auth().currentUser !== null) {
+            applyChanges();
+        } else {
+            signIn();
+        }
+    }
+
     firebase.auth().onAuthStateChanged((user) => {
         if (user) {
             // User is signed in, see docs for a list of available properties
@@ -235,9 +244,15 @@ function draw() {
                         if (userInfo === null) {
                             userInfo = undefined;
                         }
-                        if (firebase.auth().currentUser.displayName !== null
-                            && firebase.auth().currentUser.displayName !== undefined
-                            && firebase.auth().currentUser.displayName !== "undefined") {
+                        if (nameInput.value() !== firebase.auth().currentUser.displayName
+                            && firebase.auth().currentUser.displayName !== "undefined"
+                            && nameInput.value() !== "" && firebase.auth().currentUser.displayName !== null
+                            || nameInput.value() !== firebase.auth().currentUser.displayName
+                            && firebase.auth().currentUser.displayName !== "undefined"
+                            && nameInput.value() === "" && firebase.auth().currentUser.displayName !== null
+                            || nameInput.value() !== firebase.auth().currentUser.displayName
+                            && firebase.auth().currentUser.displayName !== "undefined"
+                            && nameInput.value() !== "" && firebase.auth().currentUser.displayName === null) {
                             nameInput.value(firebase.auth().currentUser.displayName);
                         }
                     }
@@ -269,7 +284,14 @@ function draw() {
                 verifyEmailButton.show();
             }
             if (nameInput.value() !== firebase.auth().currentUser.displayName
-                && firebase.auth().currentUser.displayName !== "undefined") {
+                && firebase.auth().currentUser.displayName !== "undefined"
+                && nameInput.value() !== "" && firebase.auth().currentUser.displayName !== null
+                || nameInput.value() !== firebase.auth().currentUser.displayName
+                && firebase.auth().currentUser.displayName !== "undefined"
+                && nameInput.value() === "" && firebase.auth().currentUser.displayName !== null
+                || nameInput.value() !== firebase.auth().currentUser.displayName
+                && firebase.auth().currentUser.displayName !== "undefined"
+                && nameInput.value() !== "" && firebase.auth().currentUser.displayName === null) {
                 applyChangesButton.show();
             } else {
                 applyChangesButton.hide();
@@ -311,13 +333,14 @@ function draw() {
         }
     } else {
         signInButton.show();
-        signUpButton.show();
+        //signUpButton.show();
         emailInput.show();
         googleSignInButton.show();
         passwordInput.show();
         signOutButton.hide();
         deleteButton.hide();
         nameInput.hide();
+        applyChangesButton.hide();
         verifyEmailButton.hide();
         if (accountPhoto !== undefined) {
             accountPhoto.hide();
@@ -357,7 +380,8 @@ function signIn(provider) {
                 var alertText;
                 if (error.message === "There is no user record " +
                     "corresponding to this identifier. The user may have been deleted.") {
-                    alertText = "O Usuário Não Foi Encontrado.";
+                    //alertText = "O Usuário Não Foi Encontrado.";
+                    signUp("email&password");
                 } else if (error.message === "The email address is badly formatted.") {
                     alertText = "O Endereço De Email Está Escrito Incorretamente\n(Falta @something.com).";
                 } else if (error.message === "The password is invalid or the user " +
@@ -499,7 +523,8 @@ function signUp(provider) {
 
                 var alertText;
                 if (error.message === "The email address is already in use by another account.") {
-                    alertText = "O Endereço De Email Já Está Sendo Usado Por Outra Conta.";
+                    //alertText = "O Endereço De Email Já Está Sendo Usado Por Outra Conta.";
+                    signIn("email&password");
                 } else if (error.message === "Password should be at least 6 characters") {
                     alertText = "A Senha Deve Ter Pelo Menos 6 Caracteres.";
                 } else if (error.message === "The email address is badly formatted.") {
@@ -539,6 +564,7 @@ function signOut() {
     userInfo = undefined;
     verifyEmailButton.hide();
     nameInput.hide();
+    applyChangesButton.hide();
     if (accountPhoto !== undefined) {
         accountPhoto.hide();
         accountPhoto = undefined;
@@ -550,6 +576,7 @@ function Delete() {
     firebase.auth().currentUser.delete();
     verifyEmailButton.hide();
     nameInput.hide();
+    applyChangesButton.hide();
     if (accountPhoto !== undefined) {
         accountPhoto.hide();
         accountPhoto = undefined;
@@ -596,14 +623,14 @@ function windowResized() {
         resizeCanvas(windowWidth, windowHeight);
         emailInput.position(windowWidth / 2 - 185, height / 2 - 90);
         passwordInput.position(windowWidth / 2 - 185, height / 2 - 50);
-        googleSignInButton.position(windowWidth / 2 - 22.5, height / 2 + 110);
+        googleSignInButton.position(windowWidth / 2 - 22.5, height / 2 + 65); //, height / 2 + 120
         applyChangesButton.position(windowWidth / 2 - 108, height / 2 - 48);
         verifyEmailButton.position(windowWidth / 2 - 185, height / 2 - 150);
         nameInput.position(windowWidth / 2 - 60, height / 2 - 90);
         if (accountPhoto !== undefined) {
             accountPhoto.position(windowWidth / 2 - 20, 5);
         }
-        signInButton.position(windowWidth / 2 - 55, height / 2);
+        signInButton.position(windowWidth / 2 - 55, height / 2 + 10); //, height / 2
         signUpButton.position(windowWidth / 2 - 65, height / 2 + 52.5);
         signOutButton.position(windowWidth / 2 - 55, height / 2); //height / 2 + 104.5
         deleteButton.position(windowWidth / 2 - 65, height / 2 + 52.5); //height / 2 + 184.5
@@ -677,17 +704,34 @@ function emailVerification() {
 }
 
 function applyChanges() {
-    if (nameInput.value() !== firebase.auth().currentUser.displayName
+    if (firebase.auth().currentUser !== null
+        && nameInput.value() !== firebase.auth().currentUser.displayName
         && firebase.auth().currentUser.displayName !== "undefined"
         && nameInput.value() !== "" && firebase.auth().currentUser.displayName !== null
-        || nameInput.value() !== firebase.auth().currentUser.displayName
+        || firebase.auth().currentUser !== null
+        && nameInput.value() !== firebase.auth().currentUser.displayName
         && firebase.auth().currentUser.displayName !== "undefined"
         && nameInput.value() === "" && firebase.auth().currentUser.displayName !== null
-        || nameInput.value() !== firebase.auth().currentUser.displayName
+        || firebase.auth().currentUser !== null
+        && nameInput.value() !== firebase.auth().currentUser.displayName
         && firebase.auth().currentUser.displayName !== "undefined"
         && nameInput.value() !== "" && firebase.auth().currentUser.displayName === null) {
         firebase.auth().currentUser.updateProfile({
             displayName: nameInput.value(),
+        }).catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            print(errorMessage, " errorCode: " + errorCode);
+
+            var alertText;
+            if (error.message === "Display name too long.") {
+                alertText = "O Nome É Muito Longo.";
+            }
+
+            console.log(alertText);
+            if (alertText !== undefined) {
+                alert(alertText);
+            }
         });
 
         applyChangesButton.hide();
