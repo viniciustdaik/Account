@@ -163,7 +163,8 @@ function draw() {
             accountPhoto.style("border-radius:45px");
             accountPhoto.size(50, 50);
         }
-        if (firebase.auth().currentUser.emailVerified === true) {
+        if (firebase.auth().currentUser.emailVerified === true
+            || firebase.auth().currentUser === null) {
             verifyEmailButton.hide();
         }
         push();
@@ -216,8 +217,7 @@ function draw() {
                         }
                     }
                 });
-            } else if (firebase.auth().currentUser.emailVerifed === true
-                && userInfo.verifyButtonCooldownDone !== undefined) {
+            } else if (firebase.auth().currentUser.emailVerifed === true) {
                 firebase.database().ref("/users/" + firebase.auth().currentUser.uid
                     + "/verifyButtonCooldownDone").remove();
             } else if (firebase.auth().currentUser.emailVerifed === false
@@ -255,6 +255,10 @@ function draw() {
             }
         }
 
+        if (firebase.auth().currentUser.emailVerified === true
+            || firebase.auth().currentUser === null) {
+            verifyEmailButton.hide();
+        }
         textAlign("center", "top");
         fill("black");
         textSize(45);
@@ -501,6 +505,8 @@ function signUp(provider) {
 function signOut() {
     firebase.auth().signOut();
     userInfo = undefined;
+    verifyEmailButton.hide();
+    nameInput.hide();
     if (accountPhoto !== undefined) {
         accountPhoto.hide();
         accountPhoto = undefined;
@@ -510,6 +516,7 @@ function signOut() {
 function Delete() {
     firebase.database().ref("/users/" + firebase.auth().currentUser.uid).remove();
     firebase.auth().currentUser.delete();
+    verifyEmailButton.hide();
     nameInput.hide();
     if (accountPhoto !== undefined) {
         accountPhoto.hide();
