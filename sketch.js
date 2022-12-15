@@ -1,5 +1,5 @@
 var signInInfo, emailInput, passwordInput, signInButton, signUpButton, signOutButton, deleteButton,
-    googleSignInButton;
+    googleSignInButton, verifyEmailButton, verifyButtonCooldownDone = true;
 
 var userInfo;
 
@@ -117,10 +117,38 @@ function setup() {
     deleteButton.size(170, 50);
     deleteButton.hide();
     deleteButton.mousePressed(() => this.confirm("Delete"));
+
+    verifyEmailButton = createButton("Verificar Email");
+    verifyEmailButton.hide();
+    verifyEmailButton.position(width / 2 - 185 - xMinus, height / 2 - 150);
+    verifyEmailButton.size(400, 50);
+    verifyEmailButton.style("background-color:blue");
+    if (!isMobile) {
+        verifyEmailButton.style("font-size:45px");
+    } else {
+        verifyEmailButton.style("font-size:35px");
+    }
+    verifyEmailButton.style("border-radius:25px");
+    verifyEmailButton.style("color:black");
+    verifyEmailButton.style("cursor:pointer");
+    verifyEmailButton.mousePressed(() => this.emailVerification());
 }
 
 function draw() {
     background("gray");
+
+    firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+            // User is signed in, see docs for a list of available properties
+            // https://firebase.google.com/docs/reference/js/firebase.User
+            var uid = user.uid;
+            firebase.auth().currentUser.emailVerifed = user.emailVerified;
+            // ...
+        } else {
+            // User is signed out
+            // ...
+        }
+    });
 
     if (firebase.auth().currentUser !== null) {
         if (accountPhoto === undefined && firebase.auth().currentUser.photoURL !== null) {
@@ -129,6 +157,9 @@ function draw() {
             accountPhoto.style("content:contain");
             accountPhoto.style("border-radius:45px");
             accountPhoto.size(50, 50);
+        }
+        if (firebase.auth().currentUser.emailVerified === true) {
+            verifyEmailButton.hide();
         }
         push();
         if (userInfo === undefined && userInfo !== null
@@ -147,6 +178,12 @@ function draw() {
                     && firebase.auth().currentUser !== null) {
                     userInfo = data.val();
                     console.log("userInfo:" + userInfo);
+                    if (firebase.auth().currentUser.emailVerified === false) {
+                        console.log("Email is not verified.");
+                        verifyEmailButton.show();
+                    } else {
+                        console.log("Email is verified.");
+                    }
                     if (userInfo !== null) {
                         nameInput.value(userInfo.name);
                     }
@@ -154,6 +191,52 @@ function draw() {
             });
         } else if (userInfo !== null
             && firebase.auth().currentUser !== null) {
+            if (firebase.auth().currentUser.emailVerifed === false
+                && userInfo.verifyButtonCooldownDone === undefined) {
+                firebase.database().ref("/users/" + firebase.auth().currentUser.uid).update({
+                    verifyButtonCooldownDone: true,
+                });
+
+                var userInfoRef = firebase.database().ref("/users/"
+                    + firebase.auth().currentUser.uid);
+                userInfoRef.on("value", data2 => {
+                    if (userInfo === undefined) {
+                        userInfo = data2.val();
+                        console.log("userInfo:" + userInfo);
+                        if (userInfo !== null) {
+                            nameInput.value(userInfo.name);
+                        } else {
+                            userInfo = undefined;
+                        }
+                    }
+                });
+            } else if (firebase.auth().currentUser.emailVerifed === true
+                && userInfo.verifyButtonCooldownDone !== undefined) {
+                firebase.database().ref("/users/" + firebase.auth().currentUser.uid
+                    + "/verifyButtonCooldownDone").remove();
+            } else if (firebase.auth().currentUser.emailVerifed === false
+                && userInfo.verifyButtonCooldownDone !== undefined
+                && verifyButtonCooldownDone !== userInfo.verifyButtonCooldownDone) {
+                verifyButtonCooldownDone = userInfo.verifyButtonCooldownDone;
+
+                if (verifyButtonCooldownDone === false) {
+                    setTimeout(() => {
+                        if (firebase.auth().currentUser.uid !== null
+                            && verifyButtonCooldownDone === false) {
+                            console.log("verifyButtonCooldownDone");
+
+                            firebase.database().ref("/users/" + firebase.auth().currentUser.uid).update({
+                                verifyButtonCooldownDone: true,
+                            });
+
+                            userInfo.verifyButtonCooldownDone = true;
+                        }
+                    }, 10000);
+                }
+            }
+            if (firebase.auth().currentUser.emailVerified === false) {
+                verifyEmailButton.show();
+            }
             textSize(25);
             textAlign("right", "center")
             fill("black")
@@ -205,6 +288,7 @@ function draw() {
         signOutButton.hide();
         deleteButton.hide();
         nameInput.hide();
+        verifyEmailButton.hide();
         if (accountPhoto !== undefined) {
             accountPhoto.hide();
         }
@@ -477,6 +561,7 @@ function windowResized() {
         emailInput.position(windowWidth / 2 - 185, height / 2 - 90);
         passwordInput.position(windowWidth / 2 - 185, height / 2 - 50);
         googleSignInButton.position(windowWidth / 2 - 22.5, height / 2 + 110);
+        verifyEmailButton.position(windowWidth / 2 - 185, height / 2 - 150);
         nameInput.position(windowWidth / 2 - 60, height / 2 - 90);
         if (accountPhoto !== undefined) {
             accountPhoto.position(windowWidth / 2 - 20, 5);
@@ -504,4 +589,52 @@ function alert(text) {
 
         }
     })
+}
+
+function emailVerification() {
+    if (firebase.auth().currentUser !== null
+        && firebase.auth().currentUser.emailVerified === false
+        && verifyButtonCooldownDone === true) {
+        firebase.auth().currentUser.sendEmailVerification().then(() => {
+            firebase.database().ref("/users/" + firebase.auth().currentUser.uid).update({
+                verifyButtonCooldownDone: false,
+            });
+            userInfo.verifyButtonCooldownDone = false;
+
+            alert("Link De Verificação Enviado Para " + firebase.auth().currentUser.email + "");
+
+            setTimeout(() => {
+                if (firebase.auth().currentUser.uid !== null
+                    && verifyButtonCooldownDone === false) {
+                    console.log("verifyButtonCooldownDone");
+
+                    firebase.database().ref("/users/" + firebase.auth().currentUser.uid).update({
+                        verifyButtonCooldownDone: true,
+                    });
+
+                    userInfo.verifyButtonCooldownDone = true;
+                }
+            }, 10000);
+        })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                print(errorMessage, " errorCode: " + errorCode);
+
+                var alertText;
+                if (error.message === "We have blocked all requests from this device due to " +
+                    "unusual activity. Try again later.") {
+                    alertText = "Muitas Tentativas, Tente Novamente Mais Tarde.";
+                }
+
+                console.log(alertText);
+                if (alertText !== undefined) {
+                    alert(alertText);
+                }
+            });
+    } else if (firebase.auth().currentUser !== null
+        && firebase.auth().currentUser.emailVerified === false
+        && verifyButtonCooldownDone === false) {
+        alert("Espere 10 Segundos Antes De Mandar Outro Link.");
+    }
 }
