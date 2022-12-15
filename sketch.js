@@ -7,42 +7,75 @@ var nameInput, accountPhoto;
 
 var initialWidth, initialHeight, newWidthAdded = 0;
 
+var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);//iPad
+
 function setup() {
     createCanvas(windowWidth, windowHeight);
+
+    var xMinus = !isMobile ? 0 : 17.5;
 
     initialWidth = width;
     initialHeight = height;
 
     emailInput = createInput("").attribute("placeholder", "Email");
-    emailInput.position(width / 2 - 185, height / 2 - 90);
-    emailInput.size(400, 30);
+    if (!isMobile) {
+        emailInput.size(400, 30);
+        emailInput.position(width / 2 - 185, height / 2 - 90);
+    } else {
+        emailInput.size(width / 1.12, 30);
+        emailInput.position(10, height / 2 - 90);
+    }
     emailInput.style("border-radius:15px");
     emailInput.style("font-size:25px");
 
     passwordInput = createInput("").attribute("placeholder", "Senha");
-    passwordInput.position(width / 2 - 85, height / 2 - 50);
-    passwordInput.size(200, 30);
+    if (!isMobile) {
+        passwordInput.position(width / 2 - 185, height / 2 - 40);
+        passwordInput.size(400, 30);
+    } else {
+        passwordInput.size(width / 1.12, 30);
+        passwordInput.position(10, height / 2 - 40);
+    }
     passwordInput.style("border-radius:15px");
     passwordInput.style("font-size:25px");
 
     nameInput = createInput("").attribute("placeholder", "");
-    nameInput.position(width / 2 - 60, height / 2 - 90);
+    nameInput.position(width / 2 - 60 - xMinus, height / 2 - 90);
     nameInput.size(200, 30);
     nameInput.style("font-size:25px");
     nameInput.style("border-radius:15px");
     nameInput.hide();
 
     signInButton = createButton("Entrar");
-    signInButton.position(width / 2 - 55, height / 2);
+    signInButton.position(width / 2 - 55 - xMinus, height / 2 + 10);
     signInButton.size(150, 50);
     signInButton.style("background-color:blue");
-    signInButton.style("font-size:45px");
+    if (!isMobile) {
+        signInButton.style("font-size:45px");
+    } else {
+        signInButton.style("font-size:35px");
+    }
     signInButton.style("border-radius:25px");
+    signInButton.style("color:black");
     signInButton.style("cursor:pointer");
     signInButton.mousePressed(() => this.signIn("email&password"));
 
+    signUpButton = createButton("Cadastrar");
+    signUpButton.position(width / 2 - 65 - xMinus, height / 2 + 62.5);
+    signUpButton.size(170, 50);
+    signUpButton.style("background-color:lightblue");
+    signUpButton.style("color:black");
+    if (!isMobile) {
+        signUpButton.style("font-size:35px");
+    } else {
+        signUpButton.style("font-size:28px");
+    }
+    signUpButton.style("border-radius:25px");
+    signUpButton.style("cursor:pointer");
+    signUpButton.mousePressed(() => this.signUp("email&password"));
+
     googleSignInButton = createButton("");
-    googleSignInButton.position(width / 2 - 22.5, height / 2 + 110);
+    googleSignInButton.position(width / 2 - 22.5 - xMinus, height / 2 + 120);
     googleSignInButton.size(80, 80);
     googleSignInButton.style("background-color:white");
     googleSignInButton.style("background-image:url('./assets/googleIconNoBG.png");
@@ -55,20 +88,16 @@ function setup() {
     googleSignInButton.style("cursor:pointer");
     googleSignInButton.mousePressed(() => this.signIn("google"));
 
-    signUpButton = createButton("Cadastrar");
-    signUpButton.position(width / 2 - 65, height / 2 + 52.5);
-    signUpButton.size(170, 50);
-    signUpButton.style("background-color:lightblue");
-    signUpButton.style("font-size:35px");
-    signUpButton.style("border-radius:25px");
-    signUpButton.style("cursor:pointer");
-    signUpButton.mousePressed(() => this.signUp("email&password"));
-
     signOutButton = createButton("Sair");
     signOutButton.position(width / 2 - 55, height / 2); //height / 2 + 104.5
     signOutButton.size(150, 50);
     signOutButton.style("background-color:red");
-    signOutButton.style("font-size:45px");
+    if (!isMobile) {
+        signOutButton.style("font-size:45px");
+    } else {
+        signOutButton.style("font-size:40px");
+    }
+    signOutButton.style("color:black");
     signOutButton.style("border-radius:25px");
     signOutButton.style("cursor:pointer");
     signOutButton.hide();
@@ -77,7 +106,12 @@ function setup() {
     deleteButton = createButton("Deletar");
     deleteButton.position(width / 2 - 65, height / 2 + 52.5); //height / 2 + 184.5
     deleteButton.style("background-color:red");
-    deleteButton.style("font-size:45px");
+    if (!isMobile) {
+        deleteButton.style("font-size:45px");
+    } else {
+        deleteButton.style("font-size:38px");
+    }
+    deleteButton.style("color:black");
     deleteButton.style("border-radius:25px");
     deleteButton.style("cursor:pointer");
     deleteButton.size(170, 50);
@@ -370,7 +404,7 @@ function confirm(ThingToConfirm) {
 }
 
 function windowResized() {
-    if (windowWidth >= 295) {
+    if (windowWidth >= 295 && !isMobile) {
         resizeCanvas(windowWidth, windowHeight);
         emailInput.position(windowWidth / 2 - 185, height / 2 - 90);
         passwordInput.position(windowWidth / 2 - 85, height / 2 - 50);
