@@ -244,8 +244,8 @@ function draw() {
                 verifyEmailButton.show();
             }
             textSize(25);
-            textAlign("right", "center")
-            fill("black")
+            textAlign("right", "center");
+            fill("black");
             text("Nome: ", nameInput.x - newWidthAdded / 2, nameInput.y + 18);
             nameInput.show();
             if (nameInput.value() !== firebase.auth().currentUser.displayName) {
