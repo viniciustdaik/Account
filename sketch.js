@@ -238,8 +238,13 @@ function signIn(provider) {
                         nameInput.value(userInfo.name);
                     } else {
                         if (data.val() === null) {
+                            var displayName = "";
+                            if (firebase.auth().currentUser.displayName !== null) {
+                                displayName = firebase.auth().currentUser.displayName;
+                            }
+
                             firebase.database().ref("/users/" + firebase.auth().currentUser.uid).update({
-                                name: "",
+                                name: displayName,
                                 username: "",
                             });
 
