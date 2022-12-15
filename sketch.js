@@ -189,8 +189,8 @@ function draw() {
                     } else {
                         console.log("Email is verified.");
                     }
-                    if (userInfo !== null) {
-                        nameInput.value(userInfo.name);
+                    if (firebase.auth().currentUser.displayName !== null) {
+                        nameInput.value(firebase.auth().currentUser.displayName);
                     }
                 }
             });
@@ -208,10 +208,11 @@ function draw() {
                     if (userInfo === undefined) {
                         userInfo = data2.val();
                         console.log("userInfo:" + userInfo);
-                        if (userInfo !== null) {
-                            nameInput.value(userInfo.name);
-                        } else {
+                        if (userInfo === null) {
                             userInfo = undefined;
+                        }
+                        if (firebase.auth().currentUser.displayName !== null) {
+                            nameInput.value(firebase.auth().currentUser.displayName);
                         }
                     }
                 });
@@ -247,15 +248,9 @@ function draw() {
             fill("black")
             text("Nome: ", nameInput.x - newWidthAdded / 2, nameInput.y + 18);
             nameInput.show();
-            if (nameInput.value() !== userInfo.name) {
-                firebase.database().ref("/users/" + firebase.auth().currentUser.uid).update({
-                    name: nameInput.value(),
-                });
-
-                var userInfoRef = firebase.database().ref("/users/" + firebase.auth().currentUser.uid);
-                userInfoRef.on("value", data => {
-                    userInfo = data.val();
-                    //console.log("userInfo:" + userInfo);
+            if (nameInput.value() !== firebase.auth().currentUser.displayName) {
+                firebase.auth().currentUser.updateProfile({
+                    displayName: nameInput.value(),
                 });
             }
         }
@@ -373,16 +368,12 @@ function signIn(provider) {
                     if (userInfo === undefined && data.val() !== null) {
                         userInfo = data.val();
                         console.log("userInfo:" + userInfo);
-                        nameInput.value(userInfo.name);
+                        if (firebase.auth().currentUser.displayName !== null) {
+                            nameInput.value(firebase.auth().currentUser.displayName);
+                        }
                     } else {
                         if (data.val() === null) {
-                            var displayName = "";
-                            if (firebase.auth().currentUser.displayName !== null) {
-                                displayName = firebase.auth().currentUser.displayName;
-                            }
-
                             firebase.database().ref("/users/" + firebase.auth().currentUser.uid).update({
-                                name: displayName,
                                 username: "",
                             });
 
@@ -392,10 +383,11 @@ function signIn(provider) {
                                 if (userInfo === undefined) {
                                     userInfo = data2.val();
                                     console.log("userInfo:" + userInfo);
-                                    if (userInfo !== null) {
-                                        nameInput.value(userInfo.name);
-                                    } else {
+                                    if (userInfo === null) {
                                         userInfo = undefined;
+                                    }
+                                    if (firebase.auth().currentUser.displayName !== null) {
+                                        nameInput.value(firebase.auth().currentUser.displayName);
                                     }
                                 }
                             });
@@ -447,7 +439,6 @@ function signUp(provider) {
                 const user = userCredential.user;
                 print(userCredential);
                 firebase.database().ref("/users/" + firebase.auth().currentUser.uid).update({
-                    name: "",
                     username: "",
                 });
 
@@ -456,10 +447,11 @@ function signUp(provider) {
                     if (userInfo === undefined) {
                         userInfo = data.val();
                         console.log("userInfo:" + userInfo);
-                        if (userInfo !== null) {
-                            nameInput.value(userInfo.name);
-                        } else {
+                        if (userInfo === null) {
                             userInfo = undefined;
+                        }
+                        if (firebase.auth().currentUser.displayName !== null) {
+                            nameInput.value(firebase.auth().currentUser.displayName);
                         }
                     }
                 });
