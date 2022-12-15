@@ -1,4 +1,5 @@
-var signInInfo, emailInput, passwordInput, signInButton, signUpButton, signOutButton, deleteButton;
+var signInInfo, emailInput, passwordInput, signInButton, signUpButton, signOutButton, deleteButton,
+    googleSignInButton;
 
 var userInfo;
 
@@ -12,7 +13,7 @@ function setup() {
     initialWidth = width;
     initialHeight = height;
 
-    emailInput = createInput("viniciuskriiger2008@gmail.com").attribute("placeholder", "Email");
+    emailInput = createInput("").attribute("placeholder", "Email");
     emailInput.position(width / 2 - 185, height / 2 - 90);
     emailInput.size(400, 30);
     emailInput.style("border-radius:15px");
@@ -38,7 +39,21 @@ function setup() {
     signInButton.style("font-size:45px");
     signInButton.style("border-radius:25px");
     signInButton.style("cursor:pointer");
-    signInButton.mousePressed(() => this.signIn());
+    signInButton.mousePressed(() => this.signIn("email&password"));
+
+    googleSignInButton = createButton("");
+    googleSignInButton.position(width / 2 - 22.5, height / 2 + 110);
+    googleSignInButton.size(80, 80);
+    googleSignInButton.style("background-color:white");
+    googleSignInButton.style("background-image:url('./assets/googleIconNoBG.png");
+    googleSignInButton.style("background-color:#ffffff");
+    googleSignInButton.style("background-position:center");
+    googleSignInButton.style("background-size:contain");
+    googleSignInButton.style("background-repeat:no-repeat");;
+    googleSignInButton.style("font-size:45px");
+    googleSignInButton.style("border-radius:45px");
+    googleSignInButton.style("cursor:pointer");
+    googleSignInButton.mousePressed(() => this.signIn("google"));
 
     signUpButton = createButton("Cadastrar");
     signUpButton.position(width / 2 - 65, height / 2 + 52.5);
@@ -47,7 +62,7 @@ function setup() {
     signUpButton.style("font-size:35px");
     signUpButton.style("border-radius:25px");
     signUpButton.style("cursor:pointer");
-    signUpButton.mousePressed(() => this.signUp());
+    signUpButton.mousePressed(() => this.signUp("email&password"));
 
     signOutButton = createButton("Sair");
     signOutButton.position(width / 2 - 55, height / 2); //height / 2 + 104.5
@@ -73,28 +88,24 @@ function setup() {
 function draw() {
     background("gray");
 
-    if (windowWidth >= 295) {
-        emailInput.position(windowWidth / 2 - 185, height / 2 - 90);
-        passwordInput.position(windowWidth / 2 - 85, height / 2 - 50);
-        nameInput.position(windowWidth / 2 - 60, height / 2 - 90);
-        signInButton.position(windowWidth / 2 - 55, height / 2);
-        signUpButton.position(windowWidth / 2 - 65, height / 2 + 52.5);
-        signOutButton.position(windowWidth / 2 - 55, height / 2); //height / 2 + 104.5
-        deleteButton.position(windowWidth / 2 - 65, height / 2 + 52.5); //height / 2 + 184.5
-    }
-
     if (firebase.auth().currentUser !== null) {
         push();
-        if (userInfo === undefined) {
+        if (userInfo === undefined && userInfo !== null) {
+            textAlign("center");
+            fill("yellow");
+            stroke('gold');
+            textSize(55);
+            text("Carregando...", 0 - newWidthAdded / 2, height / 2 - 80, windowWidth);
+            stroke('gray');
             var userInfoRef = firebase.database().ref("/users/" + firebase.auth().currentUser.uid);
             userInfoRef.on("value", data => {
-                if (userInfo === undefined) {
+                if (userInfo === undefined && userInfo !== null) {
                     userInfo = data.val();
                     console.log("userInfo:" + userInfo);
                     nameInput.value(userInfo.name);
                 }
             });
-        } else {
+        } else if (userInfo !== null) {
             textSize(25);
             textAlign("right", "center")
             fill("black")
@@ -125,6 +136,7 @@ function draw() {
         signInButton.hide();
         signUpButton.hide();
         emailInput.hide();
+        googleSignInButton.hide();
         passwordInput.hide();
         signOutButton.show();
         deleteButton.show();
@@ -132,6 +144,7 @@ function draw() {
         signInButton.show();
         signUpButton.show();
         emailInput.show();
+        googleSignInButton.show();
         passwordInput.show();
         signOutButton.hide();
         deleteButton.hide();
@@ -141,9 +154,10 @@ function draw() {
     drawSprites();
 }
 
-function signIn() {
+function signIn(provider) {
     console.log(firebase.auth().currentUser);
-    if (emailInput.value() !== "" && passwordInput.value() !== "") {
+    if (emailInput.value() !== "" && passwordInput.value() !== ""
+        && provider === "email&password") {
         firebase.auth().signInWithEmailAndPassword(emailInput.value(), passwordInput.value())
             .then(response => {
                 console.log(response);
@@ -160,18 +174,72 @@ function signIn() {
             }).catch(error => {
                 console.log('error: ' + error);
             });
+    } else if (provider === "google") {
+        var GoogleProvider = new firebase.auth.GoogleAuthProvider();
+        firebase.auth()
+            .signInWithPopup(GoogleProvider)
+            .then((result) => {
+                /** @type {firebase.auth.OAuthCredential} */
+                var credential = result.credential;
+
+                // This gives you a Google Access Token. You can use it to access the Google API.
+                var token = credential.accessToken;
+                console.log(token);
+                // The signed-in user info.
+                var user = result.user;
+                console.log(user);
+
+                var userInfoRef = firebase.database().ref("/users/" + firebase.auth().currentUser.uid);
+                userInfoRef.on("value", data => {
+                    if (userInfo === undefined && data.val() !== null) {
+                        userInfo = data.val();
+                        console.log("userInfo:" + userInfo);
+                        nameInput.value(userInfo.name);
+                    } else {
+                        if (data.val() === null) {
+                            firebase.database().ref("/users/" + firebase.auth().currentUser.uid).update({
+                                name: "",
+                                username: "",
+                            });
+
+                            var userInfoRef = firebase.database().ref("/users/"
+                                + firebase.auth().currentUser.uid);
+                            userInfoRef.on("value", data2 => {
+                                if (userInfo === undefined) {
+                                    userInfo = data2.val();
+                                    console.log("userInfo:" + userInfo);
+                                    nameInput.value(userInfo.name);
+                                }
+                            });
+                        }
+                    }
+                });
+                // ...
+            }).catch((error) => {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                console.log(errorCode);
+                console.log(errorMessage);
+                // The email of the user's account used.
+                var email = error.email;
+                // The firebase.auth.AuthCredential type that was used.
+                var credential = error.credential;
+                // ...
+            });
+
     }
 }
 
-function signUp() {
-    if (emailInput.value() !== "" && passwordInput.value() !== "") {
+function signUp(provider) {
+    if (emailInput.value() !== "" && passwordInput.value() !== ""
+        && provider === "email&password") {
         firebase.auth().createUserWithEmailAndPassword(emailInput.value(), passwordInput.value())
             .then((userCredential) => {
                 // Signed in 
                 const user = userCredential.user;
                 print(userCredential);
                 firebase.database().ref("/users/" + firebase.auth().currentUser.uid).update({
-                    email: emailInput.value(),
                     name: "",
                     username: "",
                 });
@@ -242,6 +310,14 @@ function confirm(ThingToConfirm) {
 function windowResized() {
     if (windowWidth >= 295) {
         resizeCanvas(windowWidth, windowHeight);
+        emailInput.position(windowWidth / 2 - 185, height / 2 - 90);
+        passwordInput.position(windowWidth / 2 - 85, height / 2 - 50);
+        googleSignInButton.position(windowWidth / 2 - 22.5, height / 2 + 110);
+        nameInput.position(windowWidth / 2 - 60, height / 2 - 90);
+        signInButton.position(windowWidth / 2 - 55, height / 2);
+        signUpButton.position(windowWidth / 2 - 65, height / 2 + 52.5);
+        signOutButton.position(windowWidth / 2 - 55, height / 2); //height / 2 + 104.5
+        deleteButton.position(windowWidth / 2 - 65, height / 2 + 52.5); //height / 2 + 184.5
         if (initialWidth !== width) {
             newWidthAdded = width - initialWidth;
         } else {
