@@ -326,6 +326,26 @@ function signIn(provider) {
                 var credential = error.credential;
                 // ...
             });
+    } else if (provider === "email&password" && emailInput.value() === ""
+        || provider === "email&password" && passwordInput.value() === "") {
+        var alertText;
+
+        if (emailInput.value() === "") {
+            alertText = "Insira Um Email";
+        }
+
+        if (passwordInput.value() === ""
+            && alertText === undefined) {
+            alertText = "Insira Uma Senha.";
+        } else if (passwordInput.value() === ""
+            && alertText !== undefined) {
+            alertText = alertText + " E Uma Senha.";
+        } else if (passwordInput.value() !== "") {
+            alertText = alertText + ".";
+        }
+
+        console.log(alertText);
+        alert(alertText);
     }
 }
 
@@ -365,6 +385,8 @@ function signUp(provider) {
                     alertText = "O Endereço De Email Já Está Sendo Usado Por Outra Conta.";
                 } else if (error.message === "Password should be at least 6 characters") {
                     alertText = "A Senha Deve Ter Pelo Menos 6 Caracteres.";
+                } else if (error.message === "The email address is badly formatted.") {
+                    alertText = "O Endereço De Email Está Escrito Incorretamente\n(Falta @something.com).";
                 }
 
                 console.log(alertText);
@@ -372,6 +394,26 @@ function signUp(provider) {
                     alert(alertText);
                 }
             });
+    } else if (provider === "email&password" && emailInput.value() === ""
+        || provider === "email&password" && passwordInput.value() === "") {
+        var alertText;
+
+        if (emailInput.value() === "") {
+            alertText = "Insira Um Email";
+        }
+
+        if (passwordInput.value() === ""
+            && alertText === undefined) {
+            alertText = "Insira Uma Senha.";
+        } else if (passwordInput.value() === ""
+            && alertText !== undefined) {
+            alertText = alertText + " E Uma Senha.";
+        } else if (passwordInput.value() !== "") {
+            alertText = alertText + ".";
+        }
+
+        console.log(alertText);
+        alert(alertText);
     }
 }
 
