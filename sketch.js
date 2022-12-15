@@ -239,7 +239,22 @@ function signIn(provider) {
                     }
                 });
             }).catch(error => {
-                console.log('error: ' + error);
+                console.log(error);
+                var alertText;
+                if (error.message === "There is no user record " +
+                    "corresponding to this identifier. The user may have been deleted.") {
+                    alertText = "O Usuário Não Foi Encontrado.";
+                } else if (error.message === "The email address is badly formatted.") {
+                    alertText = "O Endereço De Email Está Escrito Incorretamente\n(Falta @something.com).";
+                } else if (error.message === "The password is invalid or the user " +
+                    "does not have a password.") {
+                    alertText = "A Senha Está Incorreta Ou O Usuário Não Tem Uma Senha.";
+                }
+
+                console.log(alertText);
+                if (alertText !== undefined) {
+                    alert(alertText);
+                }
             });
     } else if (provider === "google") {
         var GoogleProvider = new firebase.auth.GoogleAuthProvider();
@@ -344,6 +359,18 @@ function signUp(provider) {
                 const errorCode = error.code;
                 const errorMessage = error.message;
                 print(errorMessage, " errorCode: " + errorCode);
+
+                var alertText;
+                if (error.message === "The email address is already in use by another account.") {
+                    alertText = "O Endereço De Email Já Está Sendo Usado Por Outra Conta.";
+                } else if (error.message === "Password should be at least 6 characters") {
+                    alertText = "A Senha Deve Ter Pelo Menos 6 Caracteres.";
+                }
+
+                console.log(alertText);
+                if (alertText !== undefined) {
+                    alert(alertText);
+                }
             });
     }
 }
@@ -400,14 +427,13 @@ function confirm(ThingToConfirm) {
                 signOut() : Delete();
         }
     })
-
 }
 
 function windowResized() {
     if (windowWidth >= 295 && !isMobile) {
         resizeCanvas(windowWidth, windowHeight);
         emailInput.position(windowWidth / 2 - 185, height / 2 - 90);
-        passwordInput.position(windowWidth / 2 - 85, height / 2 - 50);
+        passwordInput.position(windowWidth / 2 - 185, height / 2 - 50);
         googleSignInButton.position(windowWidth / 2 - 22.5, height / 2 + 110);
         nameInput.position(windowWidth / 2 - 60, height / 2 - 90);
         if (accountPhoto !== undefined) {
@@ -423,4 +449,17 @@ function windowResized() {
             newWidthAdded = 0;
         }
     }
+}
+
+function alert(text) {
+    Swal.fire({
+        title: text,
+        icon: 'warning',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK!',
+    }).then((result) => {
+        if (result.isConfirmed) {
+
+        }
+    })
 }
