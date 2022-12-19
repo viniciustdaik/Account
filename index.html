@@ -36,22 +36,24 @@
     <script src="https://www.gstatic.com/firebasejs/8.3.2/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.3.2/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.3.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.3.2/firebase-firestore.js"></script>
 
     <script>
-        //const firebaseConfig = "https://viniciustdaik.github.io/Data.html";
-        //const firebaseConfig = "https://viniciustdaik.github.io/Data/Data.json";
-        const firebaseConfig = {
-            apiKey: "AIzaSyC65b4j9TWiCmB1Wda8--ger5XsTJ_ggC8",
-            authDomain: "tudo-83af8.firebaseapp.com",
-            projectId: "tudo-83af8",
-            storageBucket: "tudo-83af8.appspot.com",
-            messagingSenderId: "121784743717",
-            appId: "1:121784743717:web:4b1b9cade60f3e6c30cccc",
-            measurementId: "G-EZ31WP3783"
-        };
-        //console.log(firebaseConfig);
-
-        firebase.initializeApp(firebaseConfig);
+        fetch("https://viniciustdaik.github.io/Data/Data.json")
+            .then((data) => {
+                if (data.status === 200) {
+                    return data.json();
+                } else {
+                    return null;
+                }
+            })
+            .then((response) => {
+                var responseObject = response;
+                //console.log(responseObject);
+                if (responseObject) {
+                    firebase.initializeApp(responseObject);
+                }
+            });
     </script>
 
 </head>
