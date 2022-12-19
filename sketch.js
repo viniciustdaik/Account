@@ -414,7 +414,7 @@ function draw() {
 function signIn(provider) {
     console.log(firebase.auth().currentUser);
     if (emailInput.value() !== "" && passwordInput.value() !== ""
-        && provider === "email&password" && navigator.onLine === true) {
+        && provider === "email&password") {
         firebase.auth().signInWithEmailAndPassword(emailInput.value(), passwordInput.value())
             .then(response => {
                 console.log(response);
@@ -444,6 +444,9 @@ function signIn(provider) {
                 } else if (error.message === "The password is invalid or the user " +
                     "does not have a password.") {
                     alertText = "A Senha Está Incorreta Ou O Usuário Não Tem Uma Senha.";
+                } else if (error.message === "A network error (such as timeout, interrupted connection or " +
+                    "unreachable host) has occurred.") {
+                    alertText = "Você Está Offline. Cheque Sua Conexão De Internet.";
                 }
 
                 console.log(alertText);
@@ -520,6 +523,17 @@ function signIn(provider) {
                 var email = error.email;
                 // The firebase.auth.AuthCredential type that was used.
                 var credential = error.credential;
+
+                var alertText;
+                if (error.message === "A network error (such as timeout, interrupted connection or " +
+                    "unreachable host) has occurred.") {
+                    alertText = "Você Está Offline. Cheque Sua Conexão De Internet.";
+                }
+
+                console.log(alertText);
+                if (alertText !== undefined) {
+                    alert(alertText);
+                }
                 // ...
             });
     } else if (provider === "email&password" && emailInput.value() === ""
@@ -542,14 +556,12 @@ function signIn(provider) {
 
         console.log(alertText);
         alert(alertText);
-    } else if (navigator.onLine === false) {
-        alert("Você Está Offline. Cheque Sua Conexão De Internet.");
     }
 }
 
 function signUp(provider) {
     if (emailInput.value() !== "" && passwordInput.value() !== ""
-        && provider === "email&password" && navigator.onLine === true) {
+        && provider === "email&password") {
         firebase.auth().createUserWithEmailAndPassword(emailInput.value(), passwordInput.value())
             .then((userCredential) => {
                 // Signed in 
@@ -588,6 +600,9 @@ function signUp(provider) {
                     alertText = "A Senha Deve Ter Pelo Menos 6 Caracteres.";
                 } else if (error.message === "The email address is badly formatted.") {
                     alertText = "O Endereço De Email Está Escrito Incorretamente\n(Falta @algo.com).";
+                } else if (error.message === "A network error (such as timeout, interrupted connection or " +
+                    "unreachable host) has occurred.") {
+                    alertText = "Você Está Offline. Cheque Sua Conexão De Internet.";
                 }
 
                 console.log(alertText);
@@ -615,8 +630,6 @@ function signUp(provider) {
 
         console.log(alertText);
         alert(alertText);
-    } else if (navigator.onLine === false) {
-        alert("Você Está Offline. Cheque Sua Conexão De Internet.");
     }
 }
 
@@ -721,7 +734,7 @@ function alert(text) {
 function emailVerification() {
     if (firebase.auth().currentUser !== null
         && firebase.auth().currentUser.emailVerified === false
-        && verifyButtonCooldownDone === true && navigator.onLine === true) {
+        && verifyButtonCooldownDone === true) {
         firebase.auth().currentUser.sendEmailVerification().then(() => {
             firebase.database().ref("/users/" + firebase.auth().currentUser.uid).update({
                 verifyButtonCooldownDone: false,
@@ -752,6 +765,9 @@ function emailVerification() {
                 if (error.message === "We have blocked all requests from this device due to " +
                     "unusual activity. Try again later.") {
                     alertText = "Muitas Tentativas, Tente Novamente Mais Tarde.";
+                } else if (error.message === "A network error (such as timeout, interrupted connection or " +
+                    "unreachable host) has occurred.") {
+                    alertText = "Você Está Offline. Cheque Sua Conexão De Internet.";
                 }
 
                 console.log(alertText);
@@ -763,21 +779,19 @@ function emailVerification() {
         && firebase.auth().currentUser.emailVerified === false
         && verifyButtonCooldownDone === false) {
         alert("Espere 10 Segundos Antes De Mandar Outro Link.");
-    } else if (navigator.onLine === false) {
-        alert("Você Está Offline. Cheque Sua Conexão De Internet.");
     }
 }
 
 function applyChanges() {
-    if (firebase.auth().currentUser !== null && navigator.onLine === true
+    if (firebase.auth().currentUser !== null
         && nameInput.value() !== firebase.auth().currentUser.displayName
         && firebase.auth().currentUser.displayName !== "undefined"
         && nameInput.value() !== "" && firebase.auth().currentUser.displayName !== null
-        || firebase.auth().currentUser !== null && navigator.onLine === true
+        || firebase.auth().currentUser !== null
         && nameInput.value() !== firebase.auth().currentUser.displayName
         && firebase.auth().currentUser.displayName !== "undefined"
         && nameInput.value() === "" && firebase.auth().currentUser.displayName !== null
-        || firebase.auth().currentUser !== null && navigator.onLine === true
+        || firebase.auth().currentUser !== null
         && nameInput.value() !== firebase.auth().currentUser.displayName
         && firebase.auth().currentUser.displayName !== "undefined"
         && nameInput.value() !== "" && firebase.auth().currentUser.displayName === null) {
@@ -791,6 +805,9 @@ function applyChanges() {
             var alertText;
             if (error.message === "Display name too long.") {
                 alertText = "O Nome É Muito Longo.";
+            } else if (error.message === "A network error (such as timeout, interrupted connection or " +
+                "unreachable host) has occurred.") {
+                alertText = "Você Está Offline. Cheque Sua Conexão De Internet.";
             }
 
             console.log(alertText);
@@ -800,7 +817,5 @@ function applyChanges() {
         });
 
         applyChangesButton.hide();
-    } else if (navigator.onLine === false) {
-        alert("Você Está Offline. Cheque Sua Conexão De Internet.");
     }
 }
