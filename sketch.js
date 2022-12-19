@@ -22,8 +22,8 @@ function setup() {
         emailInput.size(400, 30);
         emailInput.position(width / 2 - 185, height / 2 - 90);
     } else {
-        emailInput.size("", 30);//width / 1.12
-        emailInput.style("width:89%");
+        emailInput.size(width / 1.12, 30);//width / 1.12
+        //emailInput.style("width:89%");
         emailInput.position(10, height / 2 - 90);
     }
     emailInput.style("border-radius:15px");
@@ -34,15 +34,19 @@ function setup() {
         passwordInput.position(width / 2 - 185, height / 2 - 40);
         passwordInput.size(400, 30);
     } else {
-        passwordInput.size("", 30);//width / 1.12
-        passwordInput.style("width:89%");
+        passwordInput.size(width / 1.12, 30);//width / 1.12
+        //passwordInput.style("width:89%");
         passwordInput.position(10, height / 2 - 40);
     }
     passwordInput.style("border-radius:15px");
     passwordInput.style("font-size:25px");
 
     nameInput = createInput("").attribute("placeholder", "");
-    nameInput.position(width / 2 - 60 - xMinus, height / 2 - 90);
+    if (!isMobile || isMobile && width < height) {
+        nameInput.position(width / 2 - 60 - xMinus, height / 2 - 90);
+    } else if (isMobile && width > height) {
+        nameInput.position(width / 2 - 60 - xMinus, height / 2 - 50);
+    }
     nameInput.size(200, 30);
     nameInput.style("font-size:25px");
     nameInput.style("border-radius:15px");
@@ -96,9 +100,18 @@ function setup() {
     signOutButton.style("background-color:red");
     if (!isMobile) {
         signOutButton.style("font-size:45px");
-        signOutButton.position(width / 2 - 55 - xMinus, height / 2); //height / 2 + 104.5
+        //signOutButton.position(width / 2 - 55 - xMinus, height / 2); //height / 2 + 104.5
     } else {
         signOutButton.style("font-size:40px");
+        //signOutButton.position(width - 135 - xMinus, 5);
+    }
+    if (!isMobile || isMobile && width < height) {
+        var YNum = 0;
+        if (isMobile) {
+            YNum = 10;
+        }
+        signOutButton.position(width / 2 - 55 - xMinus, height / 2 + YNum); //height / 2 + 104.5
+    } else if (isMobile && width > height) {
         signOutButton.position(width - 135 - xMinus, 5);
     }
     signOutButton.style("color:white");
@@ -111,9 +124,18 @@ function setup() {
     deleteButton.style("background-color:red");
     if (!isMobile) {
         deleteButton.style("font-size:45px");
-        deleteButton.position(width / 2 - 65 - xMinus, height / 2 + 52.5); //height / 2 + 184.5
+        //deleteButton.position(width / 2 - 65 - xMinus, height / 2 + 52.5); //height / 2 + 184.5
     } else {
         deleteButton.style("font-size:38px");
+        //deleteButton.position(20 - xMinus, 5);
+    }
+    if (!isMobile || isMobile && width < height) {
+        var YNum = 0;
+        if (isMobile) {
+            YNum = 10;
+        }
+        deleteButton.position(width / 2 - 65 - xMinus, height / 2 + 52.5 + YNum); //height / 2 + 184.5
+    } else if (isMobile && width > height) {
         deleteButton.position(20 - xMinus, 5);
     }
     deleteButton.style("color:white");
@@ -148,11 +170,18 @@ function setup() {
     applyChangesButton.hide();
     applyChangesButton.size(250, 40);
     if (!isMobile) {
-        applyChangesButton.position(width / 2 - 108 - xMinus, height / 2 - 48);
+        //applyChangesButton.position(width / 2 - 108 - xMinus, height / 2 - 48);
     } else {
         //applyChangesButton.size(width / 1.05, 50);
         //applyChangesButton.position(10, height / 2 - 48);
+        //applyChangesButton.position(width / 2 - 108 - xMinus, height / 2 - 35);
+    }
+    if (!isMobile) {
+        applyChangesButton.position(width / 2 - 108 - xMinus, height / 2 - 48);
+    } else if (isMobile && width < height) {
         applyChangesButton.position(width / 2 - 108 - xMinus, height / 2 - 35);
+    } else if (isMobile && width > height) {
+        applyChangesButton.position(width / 2 - 108 - xMinus, height / 2 + 5)
     }
     applyChangesButton.style("background-color:#103205");
     applyChangesButton.style("border-color:white");
