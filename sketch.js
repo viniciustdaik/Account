@@ -433,7 +433,12 @@ function signIn(provider) {
                     }
                 });
             }).catch(error => {
-                console.log(error);
+                if (error.message !== "There is no user record " +
+                    "corresponding to this identifier. The user may have been deleted.") {
+                    console.log(error);
+                } else {
+                    console.log("Creating User...");
+                }
                 var alertText;
                 if (error.message === "There is no user record " +
                     "corresponding to this identifier. The user may have been deleted.") {
