@@ -276,6 +276,7 @@ function draw() {
                         verifyEmailButton.show();
                     } else {
                         console.log("Email is verified.");
+                        verifyEmailButton.hide();
                     }
                     if (firebase.auth().currentUser.displayName !== null
                         && firebase.auth().currentUser.displayName !== undefined
@@ -822,5 +823,16 @@ function applyChanges() {
         });
 
         applyChangesButton.hide();
+
+        var userInfoRef = firebase.database().ref("/users/" + firebase.auth().currentUser.uid);
+        userInfoRef.on("value", data => {
+            userInfo = data.val();
+            //console.log("userInfo:" + userInfo);
+            if (firebase.auth().currentUser.emailVerified === false) {
+                verifyEmailButton.show();
+            } else {
+                verifyEmailButton.hide();
+            }
+        });
     }
 }
