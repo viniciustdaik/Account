@@ -22,7 +22,8 @@ function setup() {
         emailInput.size(400, 30);
         emailInput.position(width / 2 - 185, height / 2 - 90);
     } else {
-        emailInput.size(width / 1.12, 30);
+        emailInput.size("", 30);//width / 1.12
+        emailInput.style("width:89%");
         emailInput.position(10, height / 2 - 90);
     }
     emailInput.style("border-radius:15px");
@@ -33,7 +34,8 @@ function setup() {
         passwordInput.position(width / 2 - 185, height / 2 - 40);
         passwordInput.size(400, 30);
     } else {
-        passwordInput.size(width / 1.12, 30);
+        passwordInput.size("", 30);//width / 1.12
+        passwordInput.style("width:89%");
         passwordInput.position(10, height / 2 - 40);
     }
     passwordInput.style("border-radius:15px");
@@ -90,13 +92,14 @@ function setup() {
     googleSignInButton.mousePressed(() => this.signIn("google"));
 
     signOutButton = createButton("Sair");
-    signOutButton.position(width / 2 - 55 - xMinus, height / 2); //height / 2 + 104.5
     signOutButton.size(150, 50);
     signOutButton.style("background-color:red");
     if (!isMobile) {
         signOutButton.style("font-size:45px");
+        signOutButton.position(width / 2 - 55 - xMinus, height / 2); //height / 2 + 104.5
     } else {
         signOutButton.style("font-size:40px");
+        signOutButton.position(width - 135 - xMinus, 5);
     }
     signOutButton.style("color:white");
     signOutButton.style("border-radius:25px");
@@ -105,12 +108,13 @@ function setup() {
     signOutButton.mousePressed(() => this.confirm("signOut"));
 
     deleteButton = createButton("Deletar");
-    deleteButton.position(width / 2 - 65 - xMinus, height / 2 + 52.5); //height / 2 + 184.5
     deleteButton.style("background-color:red");
     if (!isMobile) {
         deleteButton.style("font-size:45px");
+        deleteButton.position(width / 2 - 65 - xMinus, height / 2 + 52.5); //height / 2 + 184.5
     } else {
         deleteButton.style("font-size:38px");
+        deleteButton.position(20 - xMinus, 5);
     }
     deleteButton.style("color:white");
     deleteButton.style("border-radius:25px");
@@ -125,8 +129,9 @@ function setup() {
         verifyEmailButton.position(width / 2 - 185, height / 2 - 150);
         verifyEmailButton.size(400, 50);
     } else {
-        verifyEmailButton.size(width / 1.05, 50);
-        verifyEmailButton.position(10, height / 2 - 150);
+        //verifyEmailButton.size(width / 1.05, 50);
+        verifyEmailButton.size(290, 50);
+        verifyEmailButton.position(width / 2 - 150, height / 2 - 150);//10, height / 2 - 150
     }
     verifyEmailButton.style("background-color:blue");
     if (!isMobile) {
@@ -141,12 +146,13 @@ function setup() {
 
     applyChangesButton = createButton("Salvar");
     applyChangesButton.hide();
+    applyChangesButton.size(250, 40);
     if (!isMobile) {
         applyChangesButton.position(width / 2 - 108 - xMinus, height / 2 - 48);
-        applyChangesButton.size(250, 40);
     } else {
-        applyChangesButton.size(width / 1.05, 50);
-        applyChangesButton.position(10, height / 2 - 48);
+        //applyChangesButton.size(width / 1.05, 50);
+        //applyChangesButton.position(10, height / 2 - 48);
+        applyChangesButton.position(width / 2 - 108 - xMinus, height / 2 - 35);
     }
     applyChangesButton.style("background-color:#103205");
     applyChangesButton.style("border-color:white");
@@ -313,9 +319,9 @@ function draw() {
         textWrap("CHAR");
         //text("uid: " + firebase.auth().currentUser.uid, windowWidth / 2 - newWidthAdded / 2, 35);
         var textX = 0;
-        if (accountPhoto !== undefined) {
-            textX = 40;
-        }
+        //if (accountPhoto !== undefined) {
+        textX = 40;
+        //}
         text("" + firebase.auth().currentUser.email, 0 - newWidthAdded / 2, 25 + textX,
             windowWidth, windowHeight);
 
@@ -569,6 +575,7 @@ function signOut() {
         accountPhoto.hide();
         accountPhoto = undefined;
     }
+    nameInput.value("");
 }
 
 function Delete() {
@@ -582,6 +589,7 @@ function Delete() {
         accountPhoto = undefined;
     }
     userInfo = undefined;
+    nameInput.value("");
 }
 
 function confirm(ThingToConfirm) {
