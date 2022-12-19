@@ -44,7 +44,7 @@ function setup() {
     nameInput = createInput("").attribute("placeholder", "");
     if (!isMobile || isMobile && width < height) {
         nameInput.position(width / 2 - 60 - xMinus, height / 2 - 90);
-    } else if (isMobile && width > height) {
+    } else if (isMobile && width >= height) {
         nameInput.position(width / 2 - 60 - xMinus, height / 2 - 50);
     }
     nameInput.size(200, 30);
@@ -111,7 +111,7 @@ function setup() {
             YNum = 10;
         }
         signOutButton.position(width / 2 - 55 - xMinus, height / 2 + YNum); //height / 2 + 104.5
-    } else if (isMobile && width > height) {
+    } else if (isMobile && width >= height) {
         signOutButton.position(width - 135 - xMinus, 5);
     }
     signOutButton.style("color:white");
@@ -135,7 +135,7 @@ function setup() {
             YNum = 10;
         }
         deleteButton.position(width / 2 - 65 - xMinus, height / 2 + 52.5 + YNum); //height / 2 + 184.5
-    } else if (isMobile && width > height) {
+    } else if (isMobile && width >= height) {
         deleteButton.position(20 - xMinus, 5);
     }
     deleteButton.style("color:white");
@@ -180,7 +180,7 @@ function setup() {
         applyChangesButton.position(width / 2 - 108 - xMinus, height / 2 - 48);
     } else if (isMobile && width < height) {
         applyChangesButton.position(width / 2 - 108 - xMinus, height / 2 - 35);
-    } else if (isMobile && width > height) {
+    } else if (isMobile && width >= height) {
         applyChangesButton.position(width / 2 - 108 - xMinus, height / 2 + 5)
     }
     applyChangesButton.style("background-color:#103205");
@@ -348,9 +348,9 @@ function draw() {
         textWrap("CHAR");
         //text("uid: " + firebase.auth().currentUser.uid, windowWidth / 2 - newWidthAdded / 2, 35);
         var textX = 0;
-        //if (accountPhoto !== undefined) {
-        textX = 40;
-        //}
+        if (accountPhoto !== undefined || isMobile && width >= height) {
+            textX = 40;
+        }
         text("" + firebase.auth().currentUser.email, 0 - newWidthAdded / 2, 25 + textX,
             windowWidth, windowHeight);
 
