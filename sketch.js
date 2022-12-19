@@ -367,6 +367,7 @@ function draw() {
             accountPhoto.show();
         }
     } else {
+        verifyEmailButton.hide();
         signInButton.show();
         //signUpButton.show();
         emailInput.show();
@@ -376,7 +377,6 @@ function draw() {
         deleteButton.hide();
         nameInput.hide();
         applyChangesButton.hide();
-        verifyEmailButton.hide();
         if (accountPhoto !== undefined) {
             accountPhoto.hide();
         }
@@ -633,7 +633,7 @@ function confirm(ThingToConfirm) {
 
     Swal.fire({
         title: ThingToConfirm === "signOut" ?
-            'Tem Certeza Que Você Quer Sair?' : 'Tem certeza que você quer DELETAR sua conta?',
+            'Tem Certeza Que Você Quer Sair?' : 'Tem Certeza Que Você Quer DELETAR Sua Conta?',
         //text:
         icon: 'warning',
         showCancelButton: true,
