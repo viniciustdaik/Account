@@ -199,6 +199,28 @@ function setup() {
 function draw() {
     background("gray");
 
+    if (navigator.onLine === false) {
+        push();
+        textAlign("center", "top");
+        fill("maroon");
+        stroke("red");
+        textWrap("WORD");
+        textSize(35);
+        var minusY = 55;
+        if (windowWidth <= 247) {
+            minusY = 210;
+        } else if (windowWidth <= 344) {
+            minusY = 170;
+        } else if (windowWidth <= 420) {
+            minusY = 130;
+        } else if (windowWidth <= 836) {
+            minusY = 90;
+        }
+        text("Você Está Offline. Cheque Sua Conexão De Internet.", 0 - newWidthAdded / 2, height - minusY,
+            windowWidth, height);
+        pop();
+    }
+
     if (keyWentDown("enter")) {
         if (firebase.auth().currentUser !== null) {
             applyChanges();
@@ -392,7 +414,7 @@ function draw() {
 function signIn(provider) {
     console.log(firebase.auth().currentUser);
     if (emailInput.value() !== "" && passwordInput.value() !== ""
-        && provider === "email&password") {
+        && provider === "email&password" && navigator.onLine === true) {
         firebase.auth().signInWithEmailAndPassword(emailInput.value(), passwordInput.value())
             .then(response => {
                 console.log(response);
@@ -418,7 +440,7 @@ function signIn(provider) {
                     //alertText = "O Usuário Não Foi Encontrado.";
                     signUp("email&password");
                 } else if (error.message === "The email address is badly formatted.") {
-                    alertText = "O Endereço De Email Está Escrito Incorretamente\n(Falta @something.com).";
+                    alertText = "O Endereço De Email Está Escrito Incorretamente\n(Falta @algo.com).";
                 } else if (error.message === "The password is invalid or the user " +
                     "does not have a password.") {
                     alertText = "A Senha Está Incorreta Ou O Usuário Não Tem Uma Senha.";
@@ -520,12 +542,14 @@ function signIn(provider) {
 
         console.log(alertText);
         alert(alertText);
+    } else if (navigator.onLine === false) {
+        alert("Você Está Offline. Cheque Sua Conexão De Internet.");
     }
 }
 
 function signUp(provider) {
     if (emailInput.value() !== "" && passwordInput.value() !== ""
-        && provider === "email&password") {
+        && provider === "email&password" && navigator.onLine === true) {
         firebase.auth().createUserWithEmailAndPassword(emailInput.value(), passwordInput.value())
             .then((userCredential) => {
                 // Signed in 
@@ -563,7 +587,7 @@ function signUp(provider) {
                 } else if (error.message === "Password should be at least 6 characters") {
                     alertText = "A Senha Deve Ter Pelo Menos 6 Caracteres.";
                 } else if (error.message === "The email address is badly formatted.") {
-                    alertText = "O Endereço De Email Está Escrito Incorretamente\n(Falta @something.com).";
+                    alertText = "O Endereço De Email Está Escrito Incorretamente\n(Falta @algo.com).";
                 }
 
                 console.log(alertText);
@@ -591,6 +615,8 @@ function signUp(provider) {
 
         console.log(alertText);
         alert(alertText);
+    } else if (navigator.onLine === false) {
+        alert("Você Está Offline. Cheque Sua Conexão De Internet.");
     }
 }
 
@@ -695,7 +721,7 @@ function alert(text) {
 function emailVerification() {
     if (firebase.auth().currentUser !== null
         && firebase.auth().currentUser.emailVerified === false
-        && verifyButtonCooldownDone === true) {
+        && verifyButtonCooldownDone === true && navigator.onLine === true) {
         firebase.auth().currentUser.sendEmailVerification().then(() => {
             firebase.database().ref("/users/" + firebase.auth().currentUser.uid).update({
                 verifyButtonCooldownDone: false,
@@ -737,19 +763,21 @@ function emailVerification() {
         && firebase.auth().currentUser.emailVerified === false
         && verifyButtonCooldownDone === false) {
         alert("Espere 10 Segundos Antes De Mandar Outro Link.");
+    } else if (navigator.onLine === false) {
+        alert("Você Está Offline. Cheque Sua Conexão De Internet.");
     }
 }
 
 function applyChanges() {
-    if (firebase.auth().currentUser !== null
+    if (firebase.auth().currentUser !== null && navigator.onLine === true
         && nameInput.value() !== firebase.auth().currentUser.displayName
         && firebase.auth().currentUser.displayName !== "undefined"
         && nameInput.value() !== "" && firebase.auth().currentUser.displayName !== null
-        || firebase.auth().currentUser !== null
+        || firebase.auth().currentUser !== null && navigator.onLine === true
         && nameInput.value() !== firebase.auth().currentUser.displayName
         && firebase.auth().currentUser.displayName !== "undefined"
         && nameInput.value() === "" && firebase.auth().currentUser.displayName !== null
-        || firebase.auth().currentUser !== null
+        || firebase.auth().currentUser !== null && navigator.onLine === true
         && nameInput.value() !== firebase.auth().currentUser.displayName
         && firebase.auth().currentUser.displayName !== "undefined"
         && nameInput.value() !== "" && firebase.auth().currentUser.displayName === null) {
@@ -772,5 +800,7 @@ function applyChanges() {
         });
 
         applyChangesButton.hide();
+    } else if (navigator.onLine === false) {
+        alert("Você Está Offline. Cheque Sua Conexão De Internet.");
     }
 }
