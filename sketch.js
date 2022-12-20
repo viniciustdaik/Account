@@ -420,6 +420,7 @@ function draw() {
                             }
 
                             userInfo.verifyButtonCooldownDone = true;
+                            verifyButtonCooldownDone = true;
                         }
                     }, 10000);
                 }
@@ -956,6 +957,7 @@ function emailVerification() {
                     });
             }
             userInfo.verifyButtonCooldownDone = false;
+            verifyButtonCooldownDone = false
 
             alert("Link De Verificação Enviado Para " + firebase.auth().currentUser.email + "");
 
@@ -976,6 +978,7 @@ function emailVerification() {
                     }
 
                     userInfo.verifyButtonCooldownDone = true;
+                    verifyButtonCooldownDone = true;
                 }
             }, 10000);
         })
@@ -1072,4 +1075,14 @@ function applyChanges() {
     }
 }
 
-//remove
+function checkForChanges() {
+    if (firebase.auth().currentUser !== null && userInfo !== undefined) {
+        firebase.firestore().collection('users').orderBy(firebase.auth().currentUser.uid)
+            .onSnapshot(snapshot => {
+                let changes = snapshot.docChanges();
+                changes.forEach(change => {
+                    console.log(change.doc.data());
+                });
+            });
+    }
+}
