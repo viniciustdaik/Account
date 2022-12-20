@@ -1,4 +1,4 @@
-var signInInfo, emailInput, passwordInput, signInButton, signUpButton, signOutButton, deleteButton,
+var emailInput, passwordInput, signInButton, signUpButton, signOutButton, deleteButton,
     googleSignInButton, verifyEmailButton, applyChangesButton, verifyButtonCooldownDone = true;
 
 var userInfo;
