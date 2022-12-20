@@ -386,7 +386,8 @@ function draw() {
                             }
                         });
                 }
-            } else if (firebase.auth().currentUser.emailVerified === true) {
+            } else if (firebase.auth().currentUser.emailVerified === true
+                && userInfo.verifyButtonCooldownDone !== undefined) {
                 if (getUserInfoFrom === "database") {
                     firebase.database().ref("/users/" + firebase.auth().currentUser.uid
                         + "/verifyButtonCooldownDone").remove();
