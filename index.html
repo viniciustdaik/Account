@@ -50,7 +50,7 @@
             .then((response) => {
                 var responseObject = response;
                 //console.log(responseObject);
-                if (responseObject) {
+                if (responseObject && firebase.apps.length === 0) {
                     firebase.initializeApp(responseObject);
                 }
             });
