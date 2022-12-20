@@ -11,24 +11,6 @@ var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);//iPad
 
 const getUserInfoFrom = "firestore";
 
-if (firebase.apps.length === 0) {
-    fetch("https://viniciustdaik.github.io/Data/Data.json")
-        .then((data) => {
-            if (data.status === 200) {
-                return data.json();
-            } else {
-                return null;
-            }
-        })
-        .then((response) => {
-            var responseObject = response;
-            //console.log(responseObject);
-            if (responseObject && firebase.apps.length === 0) {
-                firebase.initializeApp(responseObject);
-            }
-        });
-}
-
 function setup() {
     createCanvas(windowWidth, windowHeight);
 
@@ -218,6 +200,26 @@ function setup() {
 
 function draw() {
     background("gray");
+
+    if (firebase.apps.length === 0) {
+        //console.log("firebase: " + firebase);
+        //console.log("firebase apps length: " + firebase.apps.length);
+        fetch("https://viniciustdaik.github.io/Data/Data.json")
+            .then((data) => {
+                if (data.status === 200) {
+                    return data.json();
+                } else {
+                    return null;
+                }
+            })
+            .then((response) => {
+                var responseObject = response;
+                //console.log(responseObject);
+                if (responseObject && firebase.apps.length === 0) {
+                    firebase.initializeApp(responseObject);
+                }
+            });
+    }
 
     if (navigator.onLine === false) {
         push();
