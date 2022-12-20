@@ -320,7 +320,7 @@ function draw() {
             }
         } else if (userInfo !== null
             && firebase.auth().currentUser !== null) {
-            if (firebase.auth().currentUser.emailVerifed === false
+            if (firebase.auth().currentUser.emailVerified === false
                 && userInfo.verifyButtonCooldownDone === undefined) {
                 if (getUserInfoFrom === "database") {
                     firebase.database().ref("/users/" + firebase.auth().currentUser.uid).update({
@@ -386,18 +386,17 @@ function draw() {
                             }
                         });
                 }
-            } else if (firebase.auth().currentUser.emailVerifed === true) {
+            } else if (firebase.auth().currentUser.emailVerified === true) {
                 if (getUserInfoFrom === "database") {
                     firebase.database().ref("/users/" + firebase.auth().currentUser.uid
                         + "/verifyButtonCooldownDone").remove();
                 } else if (getUserInfoFrom === "firestore") {
-                    let ref = firebase.firestore().collection('users')
-                        .doc(firebase.auth().currentUser.uid);
-                    let removeField = ref.update({
-                        verifyButtonCooldownDone: firebase.firestore.FieldValue.delete(),
-                    });
+                    firebase.firestore().collection('users')
+                        .doc(firebase.auth().currentUser.uid).update({
+                            verifyButtonCooldownDone: firebase.firestore.FieldValue.delete(),
+                        });
                 }
-            } else if (firebase.auth().currentUser.emailVerifed === false
+            } else if (firebase.auth().currentUser.emailVerified === false
                 && userInfo.verifyButtonCooldownDone !== undefined
                 && verifyButtonCooldownDone !== userInfo.verifyButtonCooldownDone) {
                 verifyButtonCooldownDone = userInfo.verifyButtonCooldownDone;
