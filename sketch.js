@@ -285,7 +285,7 @@ function draw() {
                         }
                         if (firebase.auth().currentUser.displayName !== null
                             && firebase.auth().currentUser.displayName !== undefined
-                            && firebase.auth().currentUser.displayName !== "undefined") {
+                        ) {
                             nameInput.value(firebase.auth().currentUser.displayName);
                         }
                     }
@@ -311,7 +311,7 @@ function draw() {
                             }
                             if (firebase.auth().currentUser.displayName !== null
                                 && firebase.auth().currentUser.displayName !== undefined
-                                && firebase.auth().currentUser.displayName !== "undefined") {
+                            ) {
                                 nameInput.value(firebase.auth().currentUser.displayName);
                             }
                             //});
@@ -344,13 +344,13 @@ function draw() {
                                 userInfo = undefined;
                             }
                             if (nameInput.value() !== firebase.auth().currentUser.displayName
-                                && firebase.auth().currentUser.displayName !== "undefined"
+
                                 && nameInput.value() !== "" && firebase.auth().currentUser.displayName !== null
                                 || nameInput.value() !== firebase.auth().currentUser.displayName
-                                && firebase.auth().currentUser.displayName !== "undefined"
+
                                 && nameInput.value() === "" && firebase.auth().currentUser.displayName !== null
                                 || nameInput.value() !== firebase.auth().currentUser.displayName
-                                && firebase.auth().currentUser.displayName !== "undefined"
+
                                 && nameInput.value() !== "" && firebase.auth().currentUser.displayName === null) {
                                 nameInput.value(firebase.auth().currentUser.displayName);
                             }
@@ -369,15 +369,15 @@ function draw() {
                                     userInfo = undefined;
                                 }
                                 if (nameInput.value() !== firebase.auth().currentUser.displayName
-                                    && firebase.auth().currentUser.displayName !== "undefined"
+
                                     && nameInput.value() !== "" && firebase.auth().currentUser
                                         .displayName !== null
                                     || nameInput.value() !== firebase.auth().currentUser.displayName
-                                    && firebase.auth().currentUser.displayName !== "undefined"
+
                                     && nameInput.value() === "" && firebase.auth().currentUser
                                         .displayName !== null
                                     || nameInput.value() !== firebase.auth().currentUser.displayName
-                                    && firebase.auth().currentUser.displayName !== "undefined"
+
                                     && nameInput.value() !== "" && firebase.auth().currentUser
                                         .displayName === null) {
                                     nameInput.value(firebase.auth().currentUser.displayName);
@@ -429,13 +429,13 @@ function draw() {
                 verifyEmailButton.show();
             }
             if (nameInput.value() !== firebase.auth().currentUser.displayName
-                && firebase.auth().currentUser.displayName !== "undefined"
+
                 && nameInput.value() !== "" && firebase.auth().currentUser.displayName !== null
                 || nameInput.value() !== firebase.auth().currentUser.displayName
-                && firebase.auth().currentUser.displayName !== "undefined"
+
                 && nameInput.value() === "" && firebase.auth().currentUser.displayName !== null
                 || nameInput.value() !== firebase.auth().currentUser.displayName
-                && firebase.auth().currentUser.displayName !== "undefined"
+
                 && nameInput.value() !== "" && firebase.auth().currentUser.displayName === null) {
                 applyChangesButton.show();
             } else {
@@ -517,7 +517,10 @@ function signIn(provider) {
                             userInfo = data.val();
                             console.log("userInfo:" + userInfo);
                             if (userInfo !== null) {
-                                nameInput.value(userInfo.name);
+                                if (firebase.auth().currentUser.displayName !== null
+                                    && firebase.auth().currentUser.displayName !== undefined) {
+                                    nameInput.value(firebase.auth().currentUser.displayName);
+                                }
                             } else {
                                 userInfo = undefined;
                             }
@@ -533,7 +536,10 @@ function signIn(provider) {
                                 console.log("userInfo:" + data.data());
                                 userInfo = data.data();
                                 if (userInfo !== null) {
-                                    nameInput.value(userInfo.name);
+                                    if (firebase.auth().currentUser.displayName !== null
+                                        && firebase.auth().currentUser.displayName !== undefined) {
+                                        nameInput.value(firebase.auth().currentUser.displayName);
+                                    }
                                 } else {
                                     userInfo = undefined;
                                 }
@@ -599,7 +605,7 @@ function signIn(provider) {
                             console.log("userInfo:" + userInfo);
                             if (firebase.auth().currentUser.displayName !== null
                                 && firebase.auth().currentUser.displayName !== undefined
-                                && firebase.auth().currentUser.displayName !== "undefined") {
+                            ) {
                                 nameInput.value(firebase.auth().currentUser.displayName);
                             }
                         } else if (data.val() === null) {
@@ -619,7 +625,7 @@ function signIn(provider) {
                                     }
                                     if (firebase.auth().currentUser.displayName !== null
                                         && firebase.auth().currentUser.displayName !== undefined
-                                        && firebase.auth().currentUser.displayName !== "undefined") {
+                                    ) {
                                         nameInput.value(firebase.auth().currentUser.displayName);
                                     }
                                 }
@@ -637,7 +643,7 @@ function signIn(provider) {
                                 console.log("userInfo:" + userInfo);
                                 if (firebase.auth().currentUser.displayName !== null
                                     && firebase.auth().currentUser.displayName !== undefined
-                                    && firebase.auth().currentUser.displayName !== "undefined") {
+                                ) {
                                     nameInput.value(firebase.auth().currentUser.displayName);
                                 }
                             } else {
@@ -751,7 +757,7 @@ function signUp(provider) {
                             }
                             if (firebase.auth().currentUser.displayName !== null
                                 && firebase.auth().currentUser.displayName !== undefined
-                                && firebase.auth().currentUser.displayName !== "undefined") {
+                            ) {
                                 nameInput.value(firebase.auth().currentUser.displayName);
                             }
                         }
@@ -771,7 +777,7 @@ function signUp(provider) {
 
                                 if (firebase.auth().currentUser.displayName !== null
                                     && firebase.auth().currentUser.displayName !== undefined
-                                    && firebase.auth().currentUser.displayName !== "undefined") {
+                                ) {
                                     nameInput.value(firebase.auth().currentUser.displayName);
                                 }
                                 //});
@@ -1011,15 +1017,12 @@ function emailVerification() {
 function applyChanges() {
     if (firebase.auth().currentUser !== null
         && nameInput.value() !== firebase.auth().currentUser.displayName
-        && firebase.auth().currentUser.displayName !== "undefined"
         && nameInput.value() !== "" && firebase.auth().currentUser.displayName !== null
         || firebase.auth().currentUser !== null
         && nameInput.value() !== firebase.auth().currentUser.displayName
-        && firebase.auth().currentUser.displayName !== "undefined"
         && nameInput.value() === "" && firebase.auth().currentUser.displayName !== null
         || firebase.auth().currentUser !== null
         && nameInput.value() !== firebase.auth().currentUser.displayName
-        && firebase.auth().currentUser.displayName !== "undefined"
         && nameInput.value() !== "" && firebase.auth().currentUser.displayName === null) {
         firebase.auth().currentUser.updateProfile({
             displayName: nameInput.value(),
