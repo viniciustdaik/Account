@@ -976,58 +976,50 @@ function applyChanges() {
         .get()
         .then((snapshot) => {
             var doc = snapshot;
-            console.log("userInfo:" + doc.data());
+            //console.log("userInfo:" + doc.data());
             userInfo = doc.data();
             if (userInfo === null) {
                 userInfo = undefined;
             }
+        }).then(() => {
+            if (firebase.auth().currentUser !== null
+                && usernameInput.value().toLowerCase().trim() !== userInfo.username.toLowerCase().trim()
+                && usernameInput.value() !== "") {
+                firebase.firestore().collection('usernames').doc(usernameInput.value())
+                    .get()
+                    .then((snapshot) => {
+                        var doc = snapshot;
+                        console.log(doc.data());
+                        if (doc.data() === undefined) {
+                            firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid)
+                                .get()
+                                .then((snapshot) => {
+                                    var doc2 = snapshot;
+                                    //console.log("userInfo:" + doc2.data());
+                                    userInfo = doc2.data();
 
-            if (firebase.auth().currentUser.displayName !== null
-                && firebase.auth().currentUser.displayName !== undefined) {
-                nameInput.value(firebase.auth().currentUser.displayName);
-            }
+                                    var newUsername = usernameInput.value().trim().toLowerCase();
+                                    firebase.firestore().collection('usernames').doc(newUsername).set({});
+                                    var previousUsername = userInfo.username.toLowerCase().trim();
+                                    if (previousUsername !== "") {
+                                        firebase.firestore().collection('usernames')
+                                            .doc(previousUsername).delete();
+                                    }
 
-            if (usernameInput.value() !== userInfo.username) {
-                usernameInput.value(userInfo.username);
-            }
-        });
+                                    firebase.firestore().collection('users')
+                                        .doc(firebase.auth().currentUser.uid).set({
+                                            username: usernameInput.value().trim(),
+                                        });
 
-    if (firebase.auth().currentUser !== null
-        && usernameInput.value().toLowerCase().trim() !== userInfo.username.toLowerCase().trim()
-        && usernameInput.value() !== "") {
-        firebase.firestore().collection('usernames').doc(usernameInput.value())
-            .get()
-            .then((snapshot) => {
-                var doc = snapshot;
-                console.log(doc.data());
-                if (doc.data() === undefined) {
-                    firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid)
-                        .get()
-                        .then((snapshot) => {
-                            var doc2 = snapshot;
-                            console.log("userInfo:" + doc.data());
-                            userInfo = doc2.data();
+                                    userInfo.username = usernameInput.value();
 
-                            var newUsername = usernameInput.value().trim().toLowerCase();
-                            firebase.firestore().collection('usernames').doc(newUsername).set({});
-                            var previousUsername = userInfo.username.toLowerCase().trim();
-                            if (previousUsername !== "") {
-                                firebase.firestore().collection('usernames')
-                                    .doc(previousUsername).delete();
-                            }
-
-                            firebase.firestore().collection('users')
-                                .doc(firebase.auth().currentUser.uid).set({
-                                    username: usernameInput.value().trim(),
+                                    usernameInput.value(usernameInput.value().trim());
                                 });
+                        } else {
+                            alert("Nome De Usuário Indisponível, Tente Outro!");
+                        }
+                    });
+            }
 
-                            userInfo.username = usernameInput.value();
-
-                            usernameInput.value(usernameInput.value().trim());
-                        });
-                } else {
-                    alert("Nome De Usuário Indisponível, Tente Outro!");
-                }
-            });
-    }
+        });
 }
