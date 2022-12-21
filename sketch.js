@@ -41,7 +41,7 @@ function setup() {
 
     nameInput = createInput("").attribute("placeholder", "");
     if (!isMobile || isMobile && width < height) {
-        nameInput.position(width / 2 - 90 - 17.5, height / 2 - 90 + 10);//width / 2 - 60 - 17.5
+        nameInput.position(width / 2 - 90 - 17.5, height / 2 - 90);//width / 2 - 60 - 17.5
     } else if (isMobile && width >= height) {
         nameInput.position(width / 2 - 90 - 17.5, height / 2 - 50);//width / 2 - 60 - 17.5
     }
@@ -52,7 +52,7 @@ function setup() {
 
     usernameInput = createInput("").attribute("placeholder", "");
     if (!isMobile || isMobile && width < height) {
-        usernameInput.position(width / 2 - 90 - 17.5, height / 2 - 150);
+        usernameInput.position(width / 2 - 90 - 17.5, height / 2 - 152.5);
     } else if (isMobile && width >= height) {
         usernameInput.position(width / 2 - 90 - 17.5, height / 2 - 60);
     }
@@ -834,8 +834,8 @@ function windowResized() {
         resizeCanvas(windowWidth, windowHeight);
         emailInput.position(width / 2 - 185, height / 2 - 90);
         passwordInput.position(width / 2 - 185, height / 2 - 40);
-        nameInput.position(width / 2 - 90 - 17.5, height / 2 - 90 + 10);//width / 2 - 60 - 17.5
-        usernameInput.position(width / 2 - 90 - 17.5, height / 2 - 150);
+        nameInput.position(width / 2 - 90 - 17.5, height / 2 - 90);//width / 2 - 60 - 17.5
+        usernameInput.position(width / 2 - 90 - 17.5, height / 2 - 152.5);
         googleSignInButton.position(width / 2 - 22.5 - 17.5, height / 2 + 65); //, height / 2 + 120
         applyChangesButton.position(width / 2 - 108 - 17.5, height / 2 - 48);
         verifyEmailButton.position(width / 2 - 185, height / 2 - 230);
