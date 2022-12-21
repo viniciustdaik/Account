@@ -972,6 +972,26 @@ function applyChanges() {
             });
     }
 
+    firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid)
+        .get()
+        .then((snapshot) => {
+            var doc = snapshot;
+            console.log("userInfo:" + doc.data());
+            userInfo = doc.data();
+            if (userInfo === null) {
+                userInfo = undefined;
+            }
+
+            if (firebase.auth().currentUser.displayName !== null
+                && firebase.auth().currentUser.displayName !== undefined) {
+                nameInput.value(firebase.auth().currentUser.displayName);
+            }
+
+            if (usernameInput.value() !== userInfo.username) {
+                usernameInput.value(userInfo.username);
+            }
+        });
+
     if (firebase.auth().currentUser !== null
         && usernameInput.value().toLowerCase().trim() !== userInfo.username.toLowerCase().trim()
         && usernameInput.value() !== "") {
