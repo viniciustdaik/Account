@@ -981,20 +981,30 @@ function applyChanges() {
                 var doc = snapshot;
                 console.log(doc.data());
                 if (doc.data() === undefined) {
-                    var newUsername = usernameInput.value().trim().toLowerCase();
-                    firebase.firestore().collection('usernames').doc(newUsername).set({});
-                    var previousUsername = userInfo.username.toLowerCase().trim();
-                    if (previousUsername !== "") {
-                        firebase.firestore().collection('usernames').doc(previousUsername).delete();
-                    }
+                    firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid)
+                        .get()
+                        .then((snapshot) => {
+                            var doc2 = snapshot;
+                            console.log("userInfo:" + doc.data());
+                            userInfo = doc2.data();
 
-                    firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
-                        username: usernameInput.value().trim(),
-                    });
+                            var newUsername = usernameInput.value().trim().toLowerCase();
+                            firebase.firestore().collection('usernames').doc(newUsername).set({});
+                            var previousUsername = userInfo.username.toLowerCase().trim();
+                            if (previousUsername !== "") {
+                                firebase.firestore().collection('usernames')
+                                    .doc(previousUsername).delete();
+                            }
 
-                    userInfo.username = usernameInput.value();
+                            firebase.firestore().collection('users')
+                                .doc(firebase.auth().currentUser.uid).set({
+                                    username: usernameInput.value().trim(),
+                                });
 
-                    usernameInput.value(usernameInput.value().trim());
+                            userInfo.username = usernameInput.value();
+
+                            usernameInput.value(usernameInput.value().trim());
+                        });
                 } else {
                     alert("Nome De Usuário Indisponível, Tente Outro!");
                 }
