@@ -3,7 +3,7 @@ var emailInput, passwordInput, signInButton, signUpButton, signOutButton, delete
 
 var userInfo;
 
-var nameInput, accountPhoto;
+var usernameInput, nameInput, accountPhoto;
 
 var initialWidth, initialHeight, newWidthAdded = 0;
 
@@ -45,14 +45,25 @@ function setup() {
 
     nameInput = createInput("").attribute("placeholder", "");
     if (!isMobile || isMobile && width < height) {
-        nameInput.position(width / 2 - 60 - xMinus, height / 2 - 90);
+        nameInput.position(width / 2 - 90 - xMinus, height / 2 - 90);//width / 2 - 60 - xMinus
     } else if (isMobile && width >= height) {
-        nameInput.position(width / 2 - 60 - xMinus, height / 2 - 50);
+        nameInput.position(width / 2 - 90 - xMinus, height / 2 - 50);//width / 2 - 60 - xMinus
     }
     nameInput.size(200, 30);
     nameInput.style("font-size:25px");
     nameInput.style("border-radius:15px");
     nameInput.hide();
+
+    usernameInput = createInput("").attribute("placeholder", "");
+    if (!isMobile || isMobile && width < height) {
+        usernameInput.position(width / 2 - 90 - xMinus, height / 2 - 150);
+    } else if (isMobile && width >= height) {
+        usernameInput.position(width / 2 - 90 - xMinus, height / 2 - 60);
+    }
+    usernameInput.size(200, 30);
+    usernameInput.style("font-size:25px");
+    usernameInput.style("border-radius:15px");
+    usernameInput.hide();
 
     signInButton = createButton("Entrar");
     signInButton.position(width / 2 - 55 - xMinus, height / 2 + 10);//, height / 2
@@ -150,7 +161,7 @@ function setup() {
     verifyEmailButton = createButton("Verificar Email");
     verifyEmailButton.hide();
     if (!isMobile) {
-        verifyEmailButton.position(width / 2 - 185, height / 2 - 150);
+        verifyEmailButton.position(width / 2 - 185, height / 2 - 230);
         verifyEmailButton.size(400, 50);
     } else {
         //verifyEmailButton.size(width / 1.05, 50);
@@ -303,9 +314,12 @@ function draw() {
                                 verifyEmailButton.hide();
                             }
                             if (firebase.auth().currentUser.displayName !== null
-                                && firebase.auth().currentUser.displayName !== undefined
-                            ) {
+                                && firebase.auth().currentUser.displayName !== undefined) {
                                 nameInput.value(firebase.auth().currentUser.displayName);
+                            }
+
+                            if (usernameInput.value() !== userInfo.username) {
+                                usernameInput.value(userInfo.username);
                             }
                         }
                     });
@@ -329,9 +343,12 @@ function draw() {
                                     verifyEmailButton.hide();
                                 }
                                 if (firebase.auth().currentUser.displayName !== null
-                                    && firebase.auth().currentUser.displayName !== undefined
-                                ) {
+                                    && firebase.auth().currentUser.displayName !== undefined) {
                                     nameInput.value(firebase.auth().currentUser.displayName);
+                                }
+
+                                if (usernameInput.value() !== userInfo.username) {
+                                    usernameInput.value(userInfo.username);
                                 }
                                 //});
                             }
@@ -376,6 +393,10 @@ function draw() {
                                         .displayName === null) {
                                     nameInput.value(firebase.auth().currentUser.displayName);
                                 }
+
+                                if (usernameInput.value() !== userInfo.username) {
+                                    usernameInput.value(userInfo.username);
+                                }
                             }
                         });
                     } else if (getUserInfoFrom === "firestore") {
@@ -403,6 +424,10 @@ function draw() {
                                         && nameInput.value() !== "" && firebase.auth().currentUser
                                             .displayName === null) {
                                         nameInput.value(firebase.auth().currentUser.displayName);
+                                    }
+
+                                    if (usernameInput.value() !== userInfo.username) {
+                                        usernameInput.value(userInfo.username);
                                     }
                                     //});
                                 }
@@ -458,16 +483,24 @@ function draw() {
                     && nameInput.value() === "" && firebase.auth().currentUser.displayName !== null
                     || nameInput.value() !== firebase.auth().currentUser.displayName
 
-                    && nameInput.value() !== "" && firebase.auth().currentUser.displayName === null) {
+                    && nameInput.value() !== "" && firebase.auth().currentUser.displayName === null
+
+
+                    || usernameInput.value().toLowerCase().trim() !== userInfo.username.toLowerCase().trim()
+                    && usernameInput.value() !== "") {
                     applyChangesButton.show();
                 } else {
                     applyChangesButton.hide();
                 }
                 textSize(25);
-                textAlign("right", "center");
+                textAlign("center");//right, center
                 fill("black");
-                text("Nome: ", nameInput.x - newWidthAdded / 2, nameInput.y + 18);
+                //text("Nome: ", nameInput.x - newWidthAdded / 2, nameInput.y + 18);
+                text("Nome", 0 - newWidthAdded / 2, nameInput.y - 24, windowWidth);
                 nameInput.show();
+
+                text("Nome De Usuário", 0 - newWidthAdded / 2, usernameInput.y - 24, windowWidth);
+                usernameInput.show();
             }
 
             if (firebase.auth().currentUser.emailVerified === true
@@ -508,6 +541,7 @@ function draw() {
             signOutButton.hide();
             deleteButton.hide();
             nameInput.hide();
+            usernameInput.hide();
             applyChangesButton.hide();
             if (accountPhoto !== undefined) {
                 accountPhoto.hide();
@@ -544,6 +578,10 @@ function signIn(provider) {
                                     && firebase.auth().currentUser.displayName !== undefined) {
                                     nameInput.value(firebase.auth().currentUser.displayName);
                                 }
+
+                                if (usernameInput.value() !== userInfo.username) {
+                                    usernameInput.value(userInfo.username);
+                                }
                             } else {
                                 userInfo = undefined;
                             }
@@ -562,6 +600,10 @@ function signIn(provider) {
                                     if (firebase.auth().currentUser.displayName !== null
                                         && firebase.auth().currentUser.displayName !== undefined) {
                                         nameInput.value(firebase.auth().currentUser.displayName);
+                                    }
+
+                                    if (usernameInput.value() !== userInfo.username) {
+                                        usernameInput.value(userInfo.username);
                                     }
                                 } else {
                                     userInfo = undefined;
@@ -627,9 +669,12 @@ function signIn(provider) {
                             userInfo = data.val();
                             console.log("userInfo:" + userInfo);
                             if (firebase.auth().currentUser.displayName !== null
-                                && firebase.auth().currentUser.displayName !== undefined
-                            ) {
+                                && firebase.auth().currentUser.displayName !== undefined) {
                                 nameInput.value(firebase.auth().currentUser.displayName);
+                            }
+
+                            if (usernameInput.value() !== userInfo.username) {
+                                usernameInput.value(userInfo.username);
                             }
                         } else if (data.val() === null) {
                             firebase.database().ref("/users/" + firebase.auth().currentUser.uid).update({
@@ -647,9 +692,12 @@ function signIn(provider) {
                                         userInfo = undefined;
                                     }
                                     if (firebase.auth().currentUser.displayName !== null
-                                        && firebase.auth().currentUser.displayName !== undefined
-                                    ) {
+                                        && firebase.auth().currentUser.displayName !== undefined) {
                                         nameInput.value(firebase.auth().currentUser.displayName);
+                                    }
+
+                                    if (usernameInput.value() !== userInfo.username) {
+                                        usernameInput.value(userInfo.username);
                                     }
                                 }
                             });
@@ -665,9 +713,12 @@ function signIn(provider) {
                                 userInfo = data.data();
                                 console.log("userInfo:" + userInfo);
                                 if (firebase.auth().currentUser.displayName !== null
-                                    && firebase.auth().currentUser.displayName !== undefined
-                                ) {
+                                    && firebase.auth().currentUser.displayName !== undefined) {
                                     nameInput.value(firebase.auth().currentUser.displayName);
+                                }
+
+                                if (usernameInput.value() !== userInfo.username) {
+                                    usernameInput.value(userInfo.username);
                                 }
                             } else {
                                 firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid)
@@ -693,6 +744,10 @@ function signIn(provider) {
                                                 && firebase.auth().currentUser.displayName
                                                 !== "undefined") {
                                                 nameInput.value(firebase.auth().currentUser.displayName);
+                                            }
+
+                                            if (usernameInput.value() !== userInfo.username) {
+                                                usernameInput.value(userInfo.username);
                                             }
                                             //});
                                         }
@@ -779,9 +834,12 @@ function signUp(provider) {
                                 userInfo = undefined;
                             }
                             if (firebase.auth().currentUser.displayName !== null
-                                && firebase.auth().currentUser.displayName !== undefined
-                            ) {
+                                && firebase.auth().currentUser.displayName !== undefined) {
                                 nameInput.value(firebase.auth().currentUser.displayName);
+                            }
+
+                            if (usernameInput.value() !== userInfo.username) {
+                                usernameInput.value(userInfo.username);
                             }
                         }
                     });
@@ -799,9 +857,12 @@ function signUp(provider) {
                                 }
 
                                 if (firebase.auth().currentUser.displayName !== null
-                                    && firebase.auth().currentUser.displayName !== undefined
-                                ) {
+                                    && firebase.auth().currentUser.displayName !== undefined) {
                                     nameInput.value(firebase.auth().currentUser.displayName);
+                                }
+
+                                if (usernameInput.value() !== userInfo.username) {
+                                    usernameInput.value(userInfo.username);
                                 }
                                 //});
                             }
@@ -866,35 +927,81 @@ function signOut() {
             accountPhoto = undefined;
         }
         nameInput.value("");
+        usernameInput.value("");
     }
 }
 
 function Delete() {
     if (firebase.auth().currentUser !== null) {
         if (getUserInfoFrom === "database") {
+            var username = userInfo.username;
             firebase.database().ref("/users/" + firebase.auth().currentUser.uid).remove();
-            firebase.auth().currentUser.delete();
-            verifyEmailButton.hide();
-            nameInput.hide();
-            applyChangesButton.hide();
-            if (accountPhoto !== undefined) {
-                accountPhoto.hide();
-                accountPhoto = undefined;
+            if (username !== "") {
+                firebase.database().ref("/usernames/" + username).remove().then(() => {
+                    firebase.auth().currentUser.delete();
+                    verifyEmailButton.hide();
+                    nameInput.hide();
+                    usernameInput.hide();
+                    applyChangesButton.hide();
+                    if (accountPhoto !== undefined) {
+                        accountPhoto.hide();
+                        accountPhoto = undefined;
+                    }
+                    userInfo = null;//undefined
+                    nameInput.value("");
+                    usernameInput.value("");
+                });
             }
-            userInfo = null;//undefined
-            nameInput.value("");
+
+            if (username === "") {
+                firebase.auth().currentUser.delete();
+                verifyEmailButton.hide();
+                nameInput.hide();
+                usernameInput.hide();
+                applyChangesButton.hide();
+                if (accountPhoto !== undefined) {
+                    accountPhoto.hide();
+                    accountPhoto = undefined;
+                }
+                userInfo = null;//undefined
+                nameInput.value("");
+                usernameInput.value("");
+            }
         } else if (getUserInfoFrom === "firestore") {
+            var username = userInfo.username;
             firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).delete();
-            firebase.auth().currentUser.delete();
-            verifyEmailButton.hide();
-            nameInput.hide();
-            applyChangesButton.hide();
-            if (accountPhoto !== undefined) {
-                accountPhoto.hide();
-                accountPhoto = undefined;
+            if (username !== "") {
+                firebase.firestore().collection('usernames').doc(username).delete()
+                    .then(() => {
+                        firebase.auth().currentUser.delete();
+                        verifyEmailButton.hide();
+                        nameInput.hide();
+                        usernameInput.hide();
+                        applyChangesButton.hide();
+                        if (accountPhoto !== undefined) {
+                            accountPhoto.hide();
+                            accountPhoto = undefined;
+                        }
+                        userInfo = null;
+                        nameInput.value("");
+                        usernameInput.value("");
+                    });
             }
-            userInfo = null;
-            nameInput.value("");
+
+            if (username === "") {
+                firebase.auth().currentUser.delete();
+                verifyEmailButton.hide();
+                nameInput.hide();
+                usernameInput.hide();
+                applyChangesButton.hide();
+                if (accountPhoto !== undefined) {
+                    accountPhoto.hide();
+                    accountPhoto = undefined;
+                }
+                userInfo = null;
+                nameInput.value("");
+                usernameInput.value("");
+            }
         }
     }
 }
@@ -940,8 +1047,9 @@ function windowResized() {
         passwordInput.position(windowWidth / 2 - 185, height / 2 - 40);
         googleSignInButton.position(windowWidth / 2 - 22.5, height / 2 + 65); //, height / 2 + 120
         applyChangesButton.position(windowWidth / 2 - 108, height / 2 - 48);
-        verifyEmailButton.position(windowWidth / 2 - 185, height / 2 - 150);
-        nameInput.position(windowWidth / 2 - 60, height / 2 - 90);
+        verifyEmailButton.position(windowWidth / 2 - 185, height / 2 - 230);
+        nameInput.position(width / 2 - 90, height / 2 - 90);//width / 2 - 60 - xMinus
+        usernameInput.position(width / 2 - 90, height / 2 - 150);
         if (accountPhoto !== undefined) {
             accountPhoto.position(windowWidth / 2 - 20, 5);
         }
@@ -1099,16 +1207,33 @@ function applyChanges() {
                 });
         }
     }
-}
 
-function checkForChanges() {
-    if (firebase.auth().currentUser !== null && userInfo !== undefined) {
-        firebase.firestore().collection('users').orderBy(firebase.auth().currentUser.uid)
-            .onSnapshot(snapshot => {
-                let changes = snapshot.docChanges();
-                changes.forEach(change => {
-                    console.log(change.doc.data());
-                });
+    if (firebase.auth().currentUser !== null
+        && usernameInput.value().toLowerCase().trim() !== userInfo.username.toLowerCase().trim()
+        && usernameInput.value() !== "") {
+        firebase.firestore().collection('usernames').doc(usernameInput.value())
+            .get()
+            .then((snapshot) => {
+                var doc = snapshot;
+                console.log(doc.data());
+                if (doc.data() === undefined) {
+                    var newUsername = usernameInput.value().trim().toLowerCase();
+                    firebase.firestore().collection('usernames').doc(newUsername).set({});
+                    var previousUsername = userInfo.username.toLowerCase().trim();
+                    if (previousUsername !== "") {
+                        firebase.firestore().collection('usernames').doc(previousUsername).delete();
+                    }
+
+                    firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set({
+                        username: usernameInput.value().trim(),
+                    });
+
+                    userInfo.username = usernameInput.value();
+
+                    usernameInput.value(usernameInput.value().trim());
+                } else {
+                    alert("Nome De Usuário Indisponível, Tente Outro!");
+                }
             });
     }
 }
