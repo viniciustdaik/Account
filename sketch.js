@@ -43,7 +43,7 @@ function setup() {
 
     nameInput = createInput("").attribute("placeholder", "");
     if (!isMobile || isMobile && width < height) {
-        nameInput.position(width / 2 - 90 - xMinus, height / 2 - 90);//width / 2 - 60 - xMinus
+        nameInput.position(width / 2 - 90 - xMinus, height / 2 - 90 + 10);//width / 2 - 60 - xMinus
     } else if (isMobile && width >= height) {
         nameInput.position(width / 2 - 90 - xMinus, height / 2 - 50);//width / 2 - 60 - xMinus
     }
@@ -412,14 +412,16 @@ function draw() {
                 } else {
                     applyChangesButton.hide();
                 }
+
+                var yMinus = isMobile ? 5 : 0;
                 textSize(25);
                 textAlign("center");//right, center
                 fill("black");
                 //text("Nome: ", nameInput.x - newWidthAdded / 2, nameInput.y + 18);
-                text("Nome", 0 - newWidthAdded / 2, nameInput.y - 24, windowWidth);
+                text("Nome", 0 - newWidthAdded / 2, nameInput.y - 24 - yMinus, windowWidth);
                 nameInput.show();
 
-                text("Nome De Usuário", 0 - newWidthAdded / 2, usernameInput.y - 24, windowWidth);
+                text("Nome De Usuário", 0 - newWidthAdded / 2, usernameInput.y - 24 - yMinus, windowWidth);
                 usernameInput.show();
             }
 
