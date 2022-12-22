@@ -542,7 +542,7 @@ function signIn(provider) {
         firebase.auth()
             .signInWithPopup(GoogleProvider)
             .then((result) => {
-                if (firebase.auth().currentUser.uid === null) {
+                if (firebase.auth().currentUser === null) {
                     /** @type {firebase.auth.OAuthCredential} */
                     var credential = result.credential;
 
