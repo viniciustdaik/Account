@@ -253,7 +253,7 @@ function draw() {
             if (firebase.auth().currentUser !== null) {
                 applyChanges();
             } else {
-                signIn();
+                signIn("email&password");
             }
         }
 
