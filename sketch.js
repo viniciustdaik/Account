@@ -341,15 +341,15 @@ function draw() {
                                 if (userInfo === null) {
                                     userInfo = undefined;
                                 }
-                                if (nameInput.value() !== firebase.auth().currentUser.displayName
+                                if (nameInput.value().trim() !== firebase.auth().currentUser.displayName
 
                                     && nameInput.value() !== "" && firebase.auth().currentUser
                                         .displayName !== null
-                                    || nameInput.value() !== firebase.auth().currentUser.displayName
+                                    || nameInput.value().trim() !== firebase.auth().currentUser.displayName
 
                                     && nameInput.value() === "" && firebase.auth().currentUser
                                         .displayName !== null
-                                    || nameInput.value() !== firebase.auth().currentUser.displayName
+                                    || nameInput.value().trim() !== firebase.auth().currentUser.displayName
 
                                     && nameInput.value() !== "" && firebase.auth().currentUser
                                         .displayName === null) {
@@ -393,15 +393,15 @@ function draw() {
                 if (firebase.auth().currentUser.emailVerified === false) {
                     verifyEmailButton.show();
                 }
-                if (nameInput.value() !== firebase.auth().currentUser.displayName
+                if (nameInput.value().trim() !== firebase.auth().currentUser.displayName
 
                     && nameInput.value() !== "" && firebase.auth().currentUser.displayName !== null
-                    || nameInput.value() !== firebase.auth().currentUser.displayName
+                    || nameInput.value().trim() !== firebase.auth().currentUser.displayName
 
                     && nameInput.value() === "" && firebase.auth().currentUser.displayName !== null
-                    || nameInput.value() !== firebase.auth().currentUser.displayName
+                    || nameInput.value().trim() !== firebase.auth().currentUser.displayName
 
-                    && nameInput.value() !== "" && firebase.auth().currentUser.displayName === null
+                    && nameInput.value().trim() !== "" && firebase.auth().currentUser.displayName === null
 
 
                     || usernameInput.value().toLowerCase().trim() !== userInfo.username.toLowerCase().trim()
@@ -927,13 +927,13 @@ function emailVerification() {
 
 function applyChanges() {
     if (firebase.auth().currentUser !== null
-        && nameInput.value() !== firebase.auth().currentUser.displayName
+        && nameInput.value().trim() !== firebase.auth().currentUser.displayName
         && nameInput.value() !== "" && firebase.auth().currentUser.displayName !== null
         || firebase.auth().currentUser !== null
-        && nameInput.value() !== firebase.auth().currentUser.displayName
+        && nameInput.value().trim() !== firebase.auth().currentUser.displayName
         && nameInput.value() === "" && firebase.auth().currentUser.displayName !== null
         || firebase.auth().currentUser !== null
-        && nameInput.value() !== firebase.auth().currentUser.displayName
+        && nameInput.value().trim() !== firebase.auth().currentUser.displayName
         && nameInput.value() !== "" && firebase.auth().currentUser.displayName === null) {
         firebase.auth().currentUser.updateProfile({
             displayName: nameInput.value(),
