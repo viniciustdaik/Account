@@ -566,7 +566,7 @@ function signIn(provider) {
                         .then((snapshot) => {
                             //snapshot.docs.forEach(data => {
                             var data = snapshot;
-                            if (userInfo === undefined && data.data() !== null) {
+                            if (data.data() !== null) {
                                 userInfo = data.data();
                                 console.log("userInfo:" + userInfo);
                                 if (firebase.auth().currentUser.displayName !== null
