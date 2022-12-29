@@ -315,7 +315,7 @@ function draw() {
                                 nameInput.value(firebase.auth().currentUser.displayName);
                             }
 
-                            if (usernameInput.value() !== userInfo.username) {
+                            if (userInfo !== undefined && usernameInput.value() !== userInfo.username) {
                                 usernameInput.value(userInfo.username);
                             }
                             //});
@@ -542,78 +542,85 @@ function signIn(provider) {
         firebase.auth()
             .signInWithPopup(GoogleProvider)
             .then((result) => {
-                if (firebase.auth().currentUser === null) {
-                    /** @type {firebase.auth.OAuthCredential} */
-                    var credential = result.credential;
+                //if (firebase.auth().currentUser === null) {
+                /** @type {firebase.auth.OAuthCredential} */
+                var credential = result.credential;
 
-                    // This gives you a Google Access Token. You can use it to access the Google API.
-                    var token = credential.accessToken;
-                    console.log(token);
-                    // The signed-in user info.
-                    var user = result.user;
-                    console.log(user);
+                // This gives you a Google Access Token. You can use it to access the Google API.
+                var token = credential.accessToken;
+                console.log(token);
+                // The signed-in user info.
+                var user = result.user;
+                console.log(user);
 
-                    if (accountPhoto === undefined && firebase.auth().currentUser.photoURL !== null) {
-                        accountPhoto = createImg(firebase.auth().currentUser.photoURL);
-                        accountPhoto.position(width / 2 - 20, 5);
-                        accountPhoto.style("content:contain");
-                        accountPhoto.style("border-radius:45px");
-                        accountPhoto.size(50, 50);
-                    }
+                if (accountPhoto === undefined && firebase.auth().currentUser.photoURL !== null) {
+                    accountPhoto = createImg(firebase.auth().currentUser.photoURL);
+                    accountPhoto.position(width / 2 - 20, 5);
+                    accountPhoto.style("content:contain");
+                    accountPhoto.style("border-radius:45px");
+                    accountPhoto.size(50, 50);
+                }
 
-                    firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid)
-                        .get()
-                        .then((snapshot) => {
-                            //snapshot.docs.forEach(data => {
-                            var data = snapshot;
-                            if (data.data() !== null) {
-                                userInfo = data.data();
-                                console.log("userInfo:" + userInfo);
-                                if (firebase.auth().currentUser.displayName !== null
-                                    && firebase.auth().currentUser.displayName !== undefined) {
-                                    nameInput.value(firebase.auth().currentUser.displayName);
-                                }
-
-                                if (usernameInput.value() !== userInfo.username) {
-                                    usernameInput.value(userInfo.username);
-                                }
-                            } else {
-                                firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid)
-                                    .set({
-                                        username: "",
-                                        trexHighscore: 0,
-                                    });
-
-                                firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid)
-                                    .get()
-                                    .then((snapshot) => {
-                                        if (userInfo === undefined) {
-                                            //snapshot.docs.forEach(data2 => {
-                                            var data2 = snapshot;
-                                            console.log("userInfo:" + data2.data());
-                                            userInfo = data2.data();
-                                            if (userInfo === null) {
-                                                userInfo = undefined;
-                                            }
-
-                                            if (firebase.auth().currentUser.displayName !== null
-                                                && firebase.auth().currentUser.displayName !== undefined
-                                                && firebase.auth().currentUser.displayName
-                                                !== "undefined") {
-                                                nameInput.value(firebase.auth().currentUser.displayName);
-                                            }
-
-                                            if (usernameInput.value() !== userInfo.username) {
-                                                usernameInput.value(userInfo.username);
-                                            }
-                                            //});
-                                        }
-                                    });
+                firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid)
+                    .get()
+                    .then((snapshot) => {
+                        //snapshot.docs.forEach(data => {
+                        var data = snapshot;
+                        console.log(data.data());
+                        if (data.data() !== null
+                            && data.data() !== undefined) {
+                            userInfo = data.data();
+                            console.log("userInfo:" + userInfo);
+                            if (firebase.auth().currentUser.displayName !== null
+                                && firebase.auth().currentUser.displayName !== undefined) {
+                                nameInput.value(firebase.auth().currentUser.displayName);
                             }
 
-                            //});
-                        });
-                }
+                            if (usernameInput.value() !== userInfo.username) {
+                                usernameInput.value(userInfo.username);
+                            }
+                        } else {
+                            console.log(firebase.auth().currentUser.uid);
+                            firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid)
+                                .set({
+                                    username: "",
+                                    trexHighscore: 0,
+                                }).then(() => {
+                                    firebase.firestore().collection('users')
+                                        .doc(firebase.auth().currentUser.uid)
+                                        .get()
+                                        .then((snapshot) => {
+                                            if (userInfo === undefined) {
+                                                //snapshot.docs.forEach(data2 => {
+                                                var data2 = snapshot;
+                                                console.log("userInfo:" + data2.data());
+                                                userInfo = data2.data();
+                                                if (userInfo === null) {
+                                                    userInfo = undefined;
+                                                }
+
+                                                if (firebase.auth().currentUser.displayName
+                                                    !== null
+                                                    && firebase.auth().currentUser.displayName
+                                                    !== undefined
+                                                    && firebase.auth().currentUser.displayName
+                                                    !== "undefined") {
+                                                    nameInput.value(firebase.auth()
+                                                        .currentUser.displayName);
+                                                }
+
+                                                if (usernameInput.value() !== userInfo.username) {
+                                                    usernameInput.value(userInfo.username);
+                                                }
+                                                //});
+                                            }
+                                        });
+                                });
+                        }
+
+                        //});
+                    });
+                //}
                 // ...
             }).catch((error) => {
                 // Handle Errors here.
